@@ -6,7 +6,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from src.database.models.base_model import Base
+from src.database.models.base_model import MyBase
 from config import settings
 
 # this is the Alembic Config object, which provides
@@ -26,7 +26,7 @@ if not current_url:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = MyBase.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

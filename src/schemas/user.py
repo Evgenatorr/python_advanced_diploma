@@ -1,23 +1,42 @@
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Literal
+from typing import Literal, Optional
+from src import schemas
 
 
-class UserCreateRequest(BaseModel):
+class UserBase(BaseModel):
     name: str = Field(max_length=50)
 
 
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    followers: list
-    following: list
+class UserCreate(UserBase):
+    ...
 
+
+class Follower(UserBase):
+    id: int
+
+
+class UserResponse(UserBase):
+    id: int
+    followers: Optional[list[Follower]]
+    following: Optional[list[Follower]]
+    # tweets: Optional[list[schemas.tweet.TweetResponse]]
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserUpdateRequest(UserBase):
+    followers: Optional[list[dict]]
+    following: Optional[list[dict]]
+
+
+class UserPatchRequest(UserBase):
+    name: Optional[str]
+    followers: Optional[list[dict]] = []
+    following: Optional[list[dict]] = []
+
+
 class APIUserResponse(BaseModel):
-    status: Literal['ok'] = 'ok'
-    data: UserResponse
+    result: Literal['true'] = 'true'
+    user: UserResponse
 
 
 class APIUserListResponse(BaseModel):

@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from fastapi.security import APIKeyHeader
 from pydantic_settings import BaseSettings
 from pydantic import BaseModel
 from pathlib import Path
@@ -30,11 +31,13 @@ class Settings(BaseSettings):
     """
     Base settings for program.
     """
-
+    TEMPLATES_PATH: Path = os.path.join(Path(__file__).parent, 'src', 'templates')
+    STATIC_PATH: Path = os.path.join(Path(__file__).parent, 'src', 'static')
+    API_KEY_HEADER: APIKeyHeader = APIKeyHeader(name="api-key")
     APP_BASE_HOST: str = 'fastapi'
-    APP_BASE_PORT: str = '8000'
+    APP_BASE_PORT: int = 8000
     APP_BASE_URL: str = f'http://{APP_BASE_HOST}:{APP_BASE_PORT}'
-    BASE_DIR = Path(__file__).parent
+    BASE_DIR: Path = Path(__file__).parent
     api_v1_prefix: str = "/api/v1"
     db: PostgresDbConfig = PostgresDbConfig()
 

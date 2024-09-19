@@ -55,17 +55,6 @@ class DatabaseSessionManager:
                 await session.rollback()
                 raise
 
-    @contextlib.asynccontextmanager
-    async def connect(self) -> AsyncIterator[AsyncConnection]:
-        if self._engine is None:
-            raise IOError("DatabaseSessionManager is not initialized")
-        async with self._engine.begin() as connection:
-            try:
-                yield connection
-            except Exception:
-                await connection.rollback()
-                raise
-
 
 db_manager = DatabaseSessionManager()
 

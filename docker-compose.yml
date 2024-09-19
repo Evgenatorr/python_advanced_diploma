@@ -1,0 +1,41 @@
+services:
+  db:
+    container_name: "postgres_db"
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_NAME=${USER_NAME_DB}
+      - POSTGRES_PASSWORD=${USER_PASS_DB}
+      - POSTGRES_DB=${DB_NAME}
+      - PGDATA=./data/db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  fastapi:
+    container_name: "fastapi_tweeter_clone"
+    build:
+      dockerfile: src/Dockerfile
+    command: uvicorn src.loader:app --reload --host 0.0.0.0 --port 8000
+    env_file:
+      - ./.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - .:/code
+    networks:
+      - backend
+
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  db:
+    driver: local

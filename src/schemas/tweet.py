@@ -2,22 +2,43 @@ from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal, Optional, List
 
 
+class LikeTweet(BaseModel):
+    name: str
+    user_id: int
+    tweet_id: Optional[int]
+
+
+class TweetBase(BaseModel):
+    content: str
+    attachments: Optional[List[str]]
+
+
 class TweetCreateRequest(BaseModel):
-    tweet_data: str = Field()
+    tweet_data: str
     tweet_media_ids: Optional[List[int]]
 
 
-class TweetResponse(TweetCreateRequest):
+class TweetCreateResponse(TweetCreateRequest):
     id: int
-    likes: List
+    likes: Optional[List]
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TweetUpdateRequest(TweetBase):
+    ...
+
+
+class TweetResponse(TweetBase):
+    id: int
+    likes: Optional[list]
     model_config = ConfigDict(from_attributes=True)
 
 
 class APITweetResponse(BaseModel):
-    status: Literal['ok'] = 'ok'
-    data: TweetResponse
+    result: Literal['true'] = 'true'
+    tweet: TweetResponse
 
 
 class APITweetListResponse(BaseModel):
-    status: Literal['ok'] = 'ok'
-    data: List[TweetResponse]
+    result: Literal['true'] = 'true'
+    tweets: List[TweetResponse]

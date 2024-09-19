@@ -7,4 +7,5 @@ if __name__ == "__main__":
         app,
         host=settings.APP_BASE_HOST,
         port=settings.APP_BASE_PORT,
+        reload=True,
     )
