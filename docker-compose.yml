@@ -19,7 +19,9 @@ services:
     container_name: "fastapi_tweeter_clone"
     build:
       dockerfile: src/Dockerfile
-    command: uvicorn src.loader:app --reload --host 0.0.0.0 --port 8000
+    #    expose:
+    #      - 8000
+    command: uvicorn src.loader:app --reload --host 0.0.0.0
     env_file:
       - ./.env
     ports:
@@ -28,8 +30,24 @@ services:
       - db
     volumes:
       - .:/code
+      - ./web/static/images:/usr/share/nginx/html/static/images
     networks:
       - backend
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    depends_on:
+      - fastapi
+    volumes:
+      - ./web/nginx.conf:/etc/nginx/nginx.conf
+      - ./web/static:/code/web/static
+    networks:
+      - backend
+    ports:
+      - "8080:80"
+    links:
+      - fastapi
 
 
 networks:

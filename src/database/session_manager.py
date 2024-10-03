@@ -1,6 +1,6 @@
 import contextlib
 from typing import AsyncIterator, Optional
-
+from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncEngine,
@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import (
 class DatabaseSessionManager:
     def __init__(self) -> None:
         self._engine: Optional[AsyncEngine] = None
-        self._sessionmaker: Optional[async_sessionmaker[AsyncSession]] = None
+        self._async_sessionmaker: Optional[async_sessionmaker[AsyncSession]] = None
 
     def init(self, db_url: str) -> None:
         # Just additional example of customization.
@@ -32,7 +32,7 @@ class DatabaseSessionManager:
             pool_pre_ping=True,
             connect_args=connect_args,
         )
-        self._sessionmaker = async_sessionmaker(
+        self._async_sessionmaker = async_sessionmaker(
             bind=self._engine,
             expire_on_commit=False,
         )
@@ -42,23 +42,29 @@ class DatabaseSessionManager:
             return
         await self._engine.dispose()
         self._engine = None
-        self._sessionmaker = None
+        self._async_sessionmaker = None
 
     @contextlib.asynccontextmanager
-    async def session(self) -> AsyncIterator[AsyncSession]:
-        if self._sessionmaker is None:
+    async def gen_async_session(self) -> AsyncIterator[AsyncSession]:
+        if self._async_sessionmaker is None:
             raise IOError("DatabaseSessionManager is not initialized")
-        async with self._sessionmaker() as session:
+        async with self._async_sessionmaker() as session:
             try:
                 yield session
             except Exception:
                 await session.rollback()
                 raise
 
+    async def async_session(self) -> AsyncSession:
+        if self._async_sessionmaker is None:
+            raise IOError("DatabaseSessionManager is not initialized")
+        async with self._async_sessionmaker() as session:
+            return session
+
 
 db_manager = DatabaseSessionManager()
 
 
-async def get_session() -> AsyncSession:
-    async with db_manager.session() as session:
+async def get_async_session() -> AsyncSession:
+    async with db_manager.gen_async_session() as session:
         yield session

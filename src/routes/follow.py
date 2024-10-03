@@ -10,22 +10,18 @@ router = APIRouter(tags=['POST'])
 
 
 @router.post(
-    "/api/tweets/{tweet_id}/likes", status_code=status.HTTP_201_CREATED
+    "/api/users/{user_id}/follow", status_code=status.HTTP_201_CREATED
 )
-async def like_tweet(
-        tweet_id: int, session: AsyncSession = Depends(get_async_session),
+async def subscription(
+        user_id: int, session: AsyncSession = Depends(get_async_session),
         current_user: schemas.user.UserResponse = Depends(get_user_by_secure_key)
 ) -> JSONResponse:
-    tweet = await crud.tweet.tweet_crud.get(session=session, tweet_id=tweet_id)
-
-    if tweet:
-        like_data = {
-            'user_id': current_user.id,
-            'name': current_user.name,
-            'tweet_id': tweet_id
-        }
-
-        like = await crud.like.like_crud.post(session=session, like_data=like_data)
+    user_in_db = await crud.user.user_crud.get(session=session, user_id=user_id)
+    current_user_in_db = await crud.user.user_crud.get(session=session, user_id=current_user.id)
+    if user_in_db:
+        current_user_in_db.following.append(user_in_db)
+        await session.refresh(current_user_in_db)
+        await session.commit()
 
         return JSONResponse(
             content={

@@ -16,6 +16,12 @@ else:
     exit("Переменные окружения не загружены т.к отсутствует файл .env")
 
 
+class StaticConfig(BaseModel):
+    TEMPLATES_PATH: Path = os.path.join(Path(__file__).parent, 'src', 'templates')
+    STATIC_PATH: Path = os.path.join(Path(__file__).parent, 'web', 'static')
+    IMAGES_PATH: Path = os.path.join(Path(__file__).parent, 'web', 'static', 'images')
+
+
 class PostgresDbConfig(BaseModel):
     _db_name: str = os.getenv('DB_NAME')
     _dialect_db: str = os.getenv('DIALECT_DB')
@@ -31,8 +37,6 @@ class Settings(BaseSettings):
     """
     Base settings for program.
     """
-    TEMPLATES_PATH: Path = os.path.join(Path(__file__).parent, 'src', 'templates')
-    STATIC_PATH: Path = os.path.join(Path(__file__).parent, 'src', 'static')
     API_KEY_HEADER: APIKeyHeader = APIKeyHeader(name="api-key")
     APP_BASE_HOST: str = 'fastapi'
     APP_BASE_PORT: int = 8000
@@ -40,6 +44,7 @@ class Settings(BaseSettings):
     BASE_DIR: Path = Path(__file__).parent
     api_v1_prefix: str = "/api/v1"
     db: PostgresDbConfig = PostgresDbConfig()
+    static: StaticConfig = StaticConfig()
 
 
 settings = Settings()

@@ -16,14 +16,17 @@ class TweetCrud:
         query = await session.get(self.model, tweet_id)
         return query
 
+    async def get_list_by_user_id(self, session: AsyncSession, user_id: int):
+        query = await session.execute(select(self.model).where(self.model.author_id == user_id))
+        return query.scalars().all()
+
     async def get_list(self, session: AsyncSession):
         query = await session.execute(select(self.model))
         return query.scalars().all()
 
     async def post(self, session: AsyncSession, tweet_data, author_id: int):
         tweet = self.model(
-            content=tweet_data.get('tweet_data'),
-            # attachments=
+            **tweet_data
         )
         tweet.author_id = author_id
         session.add(tweet)

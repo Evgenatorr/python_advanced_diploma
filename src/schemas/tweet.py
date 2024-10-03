@@ -2,10 +2,17 @@ from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal, Optional, List
 
 
+class Author(BaseModel):
+    name: str
+    id: int
+    model_config = ConfigDict(from_attributes=True)
+
+
 class LikeTweet(BaseModel):
     name: str
     user_id: int
     tweet_id: Optional[int]
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TweetBase(BaseModel):
@@ -30,7 +37,8 @@ class TweetUpdateRequest(TweetBase):
 
 class TweetResponse(TweetBase):
     id: int
-    likes: Optional[list]
+    likes: Optional[list[LikeTweet]]
+    author: Author
     model_config = ConfigDict(from_attributes=True)
 
 

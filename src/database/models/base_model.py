@@ -1,6 +1,6 @@
 from sqlalchemy import MetaData
 from sqlalchemy.dialects.postgresql import TIMESTAMP, INTEGER
-from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column, declarative_base
 from sqlalchemy.sql import func
 
 convention = {
@@ -13,16 +13,17 @@ convention = {
     "fk": "fk__%(table_name)s__%(all_column_names)s__%(referred_table_name)s",
     "pk": "pk__%(table_name)s",
 }
+_Base = declarative_base()
+my_metadata = MetaData(naming_convention=convention)
 
 
 class MyBase(DeclarativeBase):
-
     @declared_attr
     def __tablename__(cls):
         # The table name is derived from the class name in lowercase
         return cls.__name__.lower()
 
-    metadata = MetaData(naming_convention=convention)  # type: ignore
+    metadata = my_metadata  # type: ignore
 
     id: Mapped[INTEGER] = mapped_column(INTEGER, primary_key=True, index=True)
     created_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP(timezone=True), default=func.now())

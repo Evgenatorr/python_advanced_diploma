@@ -1,9 +1,10 @@
 from typing import Type
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload, joinedload, dynamic_loader
 from fastapi.encoders import jsonable_encoder
 
-from src.database.models.user_model import User
+from src.database.models.user_model import User, user_following
 from src.schemas.user import UserUpdateRequest, UserPatchRequest
 from src.crud.base_crud import BaseCrud
 
@@ -16,6 +17,15 @@ class UserCrud(BaseCrud):
     async def get(self, session: AsyncSession, user_id: int):
         query = await session.get(self.model, user_id)
         return query
+
+    async def get_list_followers_by_user(self, session: AsyncSession, user: User):
+
+        followers = await session.scalars(user.followers)
+        return followers
+
+    async def get_list_following_by_user(self, session: AsyncSession, user: User):
+        following = await session.scalars(user.following)
+        return following
 
     async def get_list(self, session: AsyncSession):
         query = await session.execute(select(self.model))
@@ -42,9 +52,7 @@ class UserCrud(BaseCrud):
     async def update(self, session: AsyncSession, current_user_data: User, new_user_data: UserUpdateRequest):
         user_data = jsonable_encoder(current_user_data)
         update_data = new_user_data.model_dump(exclude_unset=True)
-        print(user_data)
         for field in user_data:
-            print(field)
             if field in update_data:
                 setattr(current_user_data, field, update_data[field])  # current_user_data.field = update_data[field]
 

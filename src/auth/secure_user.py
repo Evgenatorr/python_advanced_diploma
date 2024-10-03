@@ -1,23 +1,33 @@
-from fastapi import Security, Depends, HTTPException
+from fastapi import Security, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
-
-from src.crud.api_key import api_key_crud
-from src.database.session_manager import get_session
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload, selectinload
+from src import crud
+from src.database import models
+from src.database.session_manager import get_async_session
 from config import settings
 from src.schemas.user import UserResponse
 
 
-async def get_user(
+async def get_user_by_secure_key(
         api_key: str = Security(settings.API_KEY_HEADER),
-        session: AsyncSession = Depends(get_session)
+        session: AsyncSession = Depends(get_async_session)
 ):
-    api_key_db = await api_key_crud.get(api_key=api_key, session=session)
-
+    api_key_db = await crud.api_key.api_key_crud.get(api_key=api_key, session=session)
     if api_key_db:
-        user = api_key_db.user
-        response_model = UserResponse.model_validate(user)
-        return user
+        user: models.user_model.User = api_key_db.user
+
+        followers = await crud.user.user_crud.get_list_followers_by_user(session=session, user=user)
+        following = await crud.user.user_crud.get_list_following_by_user(session=session, user=user)
+        user_response = UserResponse(
+            id=user.id,
+            name=user.name,
+            followers=followers,
+            following=following,
+            tweets=user.tweets,
+            api_key=api_key_db
+        )
+        return user_response
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
