@@ -41,12 +41,6 @@ class UserUpdateRequest(UserBase):
     following: Optional[list[dict]]
 
 
-class UserPatchRequest(UserBase):
-    name: Optional[str]
-    followers: Optional[list[dict]] = []
-    following: Optional[list[dict]] = []
-
-
 class APIUserResponseSuccessful(APIBaseSuccessfulSchema):
     user: UserResponse
 

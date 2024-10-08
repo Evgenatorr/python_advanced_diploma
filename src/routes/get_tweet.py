@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.secure_user import get_user_by_secure_key
 from src import schemas
 from src import crud
-from src.database.session_manager import get_async_session
+from src.database.async_session import get_async_session
 
 router = APIRouter(tags=['GET'])
 
@@ -18,6 +18,13 @@ async def get_tweet(
         current_user: schemas.user.UserResponse = Depends(get_user_by_secure_key),
         session: AsyncSession = Depends(get_async_session),
 ) -> JSONResponse:
+    """
+    Роутер для получения всех твитов пользователя вместе с твитами на кого подписан user
+    :param current_user: пользователь прошедший аутентификацию
+    :param session: асинхронная сессия базы данных
+    :return: JSONResponse
+    """
+
     tweets = current_user.tweets
     user_in_db = await crud.user.user_crud.get(session=session, user_id=current_user.id)
     following = await crud.user.user_crud.get_list_following_by_user(session=session, user=user_in_db)

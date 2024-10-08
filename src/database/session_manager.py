@@ -14,14 +14,16 @@ class DatabaseSessionManager:
         self._async_sessionmaker: Optional[async_sessionmaker[AsyncSession]] = None
 
     def init(self, db_url: str) -> None:
-        # Just additional example of customization.
-        # you can add parameters to init and so on
+        """
+        Функция инициализации базы данных
+        :param db_url: url базы данных
+        :return: None
+        """
+        # настроим аргументы подключения при необходимости
         if "postgresql" in db_url:
-            # These settings are needed to work with pgbouncer in transaction mode
-            # because you can't use prepared statements in such case
             connect_args = {
-                "statement_cache_size": 0,
-                "prepared_statement_cache_size": 0,
+                # "statement_cache_size": 0,
+                # "prepared_statement_cache_size": 0,
             }
         else:
             connect_args = {}
@@ -29,6 +31,7 @@ class DatabaseSessionManager:
             url=db_url,
             pool_pre_ping=True,
             connect_args=connect_args,
+            echo=False,
         )
         self._async_sessionmaker = async_sessionmaker(
             bind=self._engine,
@@ -60,9 +63,4 @@ class DatabaseSessionManager:
             return session
 
 
-db_manager = DatabaseSessionManager()
-
-
-async def get_async_session() -> AsyncSession:
-    async with db_manager.gen_async_session() as session:
-        yield session
+db_manager: DatabaseSessionManager = DatabaseSessionManager()

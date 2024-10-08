@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.secure_user import get_user_by_secure_key
 from src import crud, schemas
-from src.database.session_manager import get_async_session
+from src.database.async_session import get_async_session
 from src.database.models.like_model import Like
 
 router: APIRouter = APIRouter(tags=['DELETE'])
@@ -16,6 +16,14 @@ async def delete_like(
         tweet_id: int, session: AsyncSession = Depends(get_async_session),
         current_user: schemas.user.UserResponse = Depends(get_user_by_secure_key)
 ) -> JSONResponse:
+    """
+    Роутер удаления лайка из базы данных
+    :param tweet_id: id твита
+    :param session: асинхронная сессия базы данных
+    :param current_user: пользователь прошедший аутентификацию
+    :return: JSONResponse
+    """
+
     like: Like = await crud.like.like_crud.get_by_user_id_and_tweet_id(
         session=session,
         user_id=current_user.id,

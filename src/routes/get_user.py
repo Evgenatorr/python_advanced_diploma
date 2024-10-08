@@ -12,6 +12,12 @@ router = APIRouter(tags=['GET'])
 async def user_info(
         current_user: UserResponse = Depends(get_user_by_secure_key)
 ) -> JSONResponse:
+    """
+    Роутер для получения информации о пользователе
+    :param current_user: пользователь прошедший аутентификацию
+    :return: JSONResponse
+    """
+
     return JSONResponse(
         content={
             "result": "true",

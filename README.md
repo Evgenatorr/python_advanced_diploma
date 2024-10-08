@@ -1,2 +1,28 @@
-docker exec -it fastapi_tweeter_clone alembic revision --autogenerate -m "create database"
-docker exec -it fastapi_tweeter_clone alembic upgrade head
+# Tweeter Clone
+
+#### Сервис микроблогов.
+
+## Функционал приложения
+
+#### Основные функции приложения на стороне backend (FastAPI):
+
+* Хранение и обработка данных, полученных от пользователя;
+* Аутентификация пользователя по api key для доступа к данным.
+
+
+## Запуск проекта
+
+* Создать файл '.env' и заполнить его по примеру файла '.env.template'
+* Подгрузить все библиотеки из [pyproject.toml](pyproject.toml):
+
+      poetry install
+
+* Запускаем проект:
+
+      docker compose up
+
+* После запуска накатываем миграцию для создания таблиц:
+
+      docker exec -it fastapi alembic upgrade head
+
+* Создать пользователя в свагере через роут /api/users

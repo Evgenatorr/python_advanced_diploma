@@ -10,11 +10,26 @@ class LikeCrud:
     def __init__(self, model: Type[Like]) -> None:
         self.model: Type[Like] = model
 
-    async def get(self, session: AsyncSession, like_id: int) -> Type[Like]:
-        query: Type[Like] = await session.get(self.model, like_id)
+    async def get(self, session: AsyncSession, like_id: int) -> Like:
+        """
+        Функция получения объекта Like по первичному ключу
+        :param session: асинхронная сессия базы данных
+        :param like_id: первичный ключ таблицы
+        :return: Like | None
+        """
+
+        query: Like | None = await session.get(self.model, like_id)
         return query
 
     async def get_by_user_id_and_tweet_id(self, session: AsyncSession, tweet_id: int, user_id: int) -> Like:
+        """
+        Функция получения объекта Like по id пользователя и id твита
+        :param session: асинхронная сессия базы данных
+        :param tweet_id: id твита
+        :param user_id: id пользователя
+        :return: Like
+        """
+
         query: Result[tuple[Like]] = await session.execute(
             select(self.model)
             .where(
@@ -24,7 +39,14 @@ class LikeCrud:
         )
         return query.scalar()
 
-    async def post(self, session: AsyncSession, like_data):
+    async def post(self, session: AsyncSession, like_data) -> Like:
+        """
+        Функция создания новой записи в таблице like
+        :param session: асинхронная сессия базы данных
+        :param like_data: данные для добавления записи в таблицу
+        :return: Like
+        """
+
         like: Like = self.model(
             **like_data,
         )
@@ -33,8 +55,15 @@ class LikeCrud:
         await session.refresh(like)
         return like
 
-    async def delete(self, session: AsyncSession, like_id: int):
-        db_obj: Type[Like] = await session.get(self.model, like_id)
+    async def delete(self, session: AsyncSession, like_id: int) -> Like | None:
+        """
+        Функция удаления записи из таблицы like по первичному ключу
+        :param session: асинхронная сессия базы данных
+        :param like_id: первичный ключ таблицы
+        :return: Like | None
+        """
+
+        db_obj: Like | None = await session.get(self.model, like_id)
 
         if not db_obj:
             return None
