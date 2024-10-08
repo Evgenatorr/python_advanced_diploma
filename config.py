@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from pathlib import Path
 
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+dotenv_path: str = os.path.join(os.path.dirname(__file__), '.env')
 
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
@@ -47,4 +47,4 @@ class Settings(BaseSettings):
     static: StaticConfig = StaticConfig()
 
 
-settings = Settings()
+settings: Settings = Settings()

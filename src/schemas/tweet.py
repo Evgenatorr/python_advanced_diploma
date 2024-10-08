@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 from typing import Literal, Optional, List
+from src.schemas.base_api_schema import APIBaseSuccessfulSchema
 
 
 class Author(BaseModel):
@@ -42,11 +43,9 @@ class TweetResponse(TweetBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-class APITweetResponse(BaseModel):
-    result: Literal['true'] = 'true'
+class APITweetResponseSuccessful(APIBaseSuccessfulSchema):
     tweet: TweetResponse
 
 
-class APITweetListResponse(BaseModel):
-    result: Literal['true'] = 'true'
+class APITweetListResponseSuccessful(APIBaseSuccessfulSchema):
     tweets: List[TweetResponse]

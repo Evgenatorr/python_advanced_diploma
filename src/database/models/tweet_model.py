@@ -1,6 +1,6 @@
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import VARCHAR, ARRAY, INTEGER, JSON
+from sqlalchemy.dialects.postgresql import VARCHAR, ARRAY, INTEGER
 from src.database.models.base_model import MyBase
 
 

@@ -32,7 +32,7 @@ class User(MyBase):
     #     backref=backref('followers', lazy='dynamic'),
     #     lazy='dynamic'
     # )
-    following: Mapped[List["User"]] = relationship(
+    following = relationship(
         "User",
         secondary=user_following,
         primaryjoin='User.id == user_following.c.followers_id',
@@ -40,7 +40,7 @@ class User(MyBase):
         back_populates="followers",
         lazy='dynamic',
     )
-    followers: Mapped[List["User"]] = relationship(
+    followers = relationship(
         "User",
         secondary=user_following,
         primaryjoin='User.id == user_following.c.following_id',

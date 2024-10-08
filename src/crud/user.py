@@ -1,45 +1,47 @@
 from typing import Type
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
-from sqlalchemy.orm import selectinload, joinedload, dynamic_loader
+from sqlalchemy import select, update, ScalarResult, Result
+from sqlalchemy.orm import AppenderQuery
 from fastapi.encoders import jsonable_encoder
 
-from src.database.models.user_model import User, user_following
+from src.database.models.user_model import User
 from src.schemas.user import UserUpdateRequest, UserPatchRequest
-from src.crud.base_crud import BaseCrud
 
 
-class UserCrud(BaseCrud):
+class UserCrud:
 
     def __init__(self, model: Type[User]):
-        self.model = model
+        self.model: Type[User] = model
 
-    async def get(self, session: AsyncSession, user_id: int):
-        query = await session.get(self.model, user_id)
+    async def get(self, session: AsyncSession, user_id: int) -> Type[User] | None:
+        query: Type[User] | None = await session.get(self.model, user_id)
         return query
 
-    async def get_list_followers_by_user(self, session: AsyncSession, user: User):
-
-        followers = await session.scalars(user.followers)
+    @staticmethod
+    async def get_list_followers_by_user(session: AsyncSession, user: User) -> ScalarResult:
+        query: AppenderQuery = user.followers
+        followers: ScalarResult = await session.scalars(query)
         return followers
 
-    async def get_list_following_by_user(self, session: AsyncSession, user: User):
-        following = await session.scalars(user.following)
+    @staticmethod
+    async def get_list_following_by_user(session: AsyncSession, user: User) -> ScalarResult:
+        query: AppenderQuery = user.following
+        following: ScalarResult = await session.scalars(query)
         return following
 
     async def get_list(self, session: AsyncSession):
-        query = await session.execute(select(self.model))
+        query: Result[tuple[User]] = await session.execute(select(self.model))
         return query.scalars().all()
 
     async def post(self, session: AsyncSession, user_data):
-        user = self.model(**user_data)
+        user: User = self.model(**user_data)
         session.add(user)
         await session.commit()
         await session.refresh(user)
         return user
 
     async def delete(self, session: AsyncSession, user_id: int):
-        db_obj = session.get(self.model, user_id)
+        db_obj = self.get(session=session, user_id=user_id)
 
         if not db_obj:
             return None

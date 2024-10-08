@@ -7,14 +7,14 @@ from src.database.models.media_model import Media
 class MediaCrud:
 
     def __init__(self, model: Type[Media]):
-        self.model = model
+        self.model: Type[Media] = model
 
-    async def get(self, session: AsyncSession, media_id: int):
-        query = await session.get(self.model, media_id)
+    async def get(self, session: AsyncSession, media_id: int | list[int]) -> Media:
+        query: Media | None = await session.get(self.model, media_id)
         return query
 
     async def post(self, session: AsyncSession, media_path):
-        media = self.model(
+        media: Media = self.model(
             file_link=media_path,
         )
         session.add(media)
@@ -23,7 +23,7 @@ class MediaCrud:
         return media
 
     async def delete(self, session: AsyncSession, media_id: int):
-        db_obj = await session.get(self.model, media_id)
+        db_obj: Media = await self.get(session=session, media_id=media_id)
 
         if not db_obj:
             return None
@@ -34,4 +34,4 @@ class MediaCrud:
         return db_obj
 
 
-media_crud = MediaCrud(Media)
+media_crud: MediaCrud = MediaCrud(Media)

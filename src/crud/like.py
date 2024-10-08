@@ -1,21 +1,21 @@
 from typing import Type
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, Result
 
 from src.database.models.like_model import Like
 
 
 class LikeCrud:
 
-    def __init__(self, model: Type[Like]):
-        self.model = model
+    def __init__(self, model: Type[Like]) -> None:
+        self.model: Type[Like] = model
 
-    async def get(self, session: AsyncSession, like_id: int):
-        query = await session.get(self.model, like_id)
+    async def get(self, session: AsyncSession, like_id: int) -> Type[Like]:
+        query: Type[Like] = await session.get(self.model, like_id)
         return query
 
-    async def get_by_user_id_and_tweet_id(self, session: AsyncSession, tweet_id: int, user_id: int):
-        query = await session.execute(
+    async def get_by_user_id_and_tweet_id(self, session: AsyncSession, tweet_id: int, user_id: int) -> Like:
+        query: Result[tuple[Like]] = await session.execute(
             select(self.model)
             .where(
                 self.model.tweet_id == tweet_id,
@@ -25,7 +25,7 @@ class LikeCrud:
         return query.scalar()
 
     async def post(self, session: AsyncSession, like_data):
-        like = self.model(
+        like: Like = self.model(
             **like_data,
         )
         session.add(like)
@@ -34,7 +34,7 @@ class LikeCrud:
         return like
 
     async def delete(self, session: AsyncSession, like_id: int):
-        db_obj = await session.get(self.model, like_id)
+        db_obj: Type[Like] = await session.get(self.model, like_id)
 
         if not db_obj:
             return None
@@ -45,4 +45,4 @@ class LikeCrud:
         return db_obj
 
 
-like_crud = LikeCrud(Like)
+like_crud: LikeCrud = LikeCrud(Like)

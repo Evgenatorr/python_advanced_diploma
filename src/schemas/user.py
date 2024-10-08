@@ -3,6 +3,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy.orm import AppenderQuery
 from src.database.session_manager import db_manager
 from src.schemas.tweet import TweetResponse
+from src.schemas.base_api_schema import APIBaseSuccessfulSchema
 
 
 class UserBase(BaseModel):
@@ -46,11 +47,9 @@ class UserPatchRequest(UserBase):
     following: Optional[list[dict]] = []
 
 
-class APIUserResponse(BaseModel):
-    result: Literal['true'] = 'true'
+class APIUserResponseSuccessful(APIBaseSuccessfulSchema):
     user: UserResponse
 
 
-class APIUserListResponse(BaseModel):
-    status: Literal['true'] = 'true'
+class APIUserListResponseSuccessful(APIBaseSuccessfulSchema):
     data: list[UserResponse]

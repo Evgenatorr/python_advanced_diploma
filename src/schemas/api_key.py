@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Literal, Optional, List
+from typing import List
+from src.schemas.base_api_schema import APIBaseSuccessfulSchema
 
 
 class ApiKeyCreateRequest(BaseModel):
@@ -12,11 +13,9 @@ class ApiKeyResponse(ApiKeyCreateRequest):
     model_config = ConfigDict(from_attributes=True)
 
 
-class APIApiKeyResponse(BaseModel):
-    status: Literal['ok'] = 'ok'
+class APIApiKeyResponseSuccessful(APIBaseSuccessfulSchema):
     data: ApiKeyResponse
 
 
-class APIApiKeyListResponse(BaseModel):
-    status: Literal['ok'] = 'ok'
+class APIApiKeyListResponseSuccessful(APIBaseSuccessfulSchema):
     data: List[ApiKeyResponse]
