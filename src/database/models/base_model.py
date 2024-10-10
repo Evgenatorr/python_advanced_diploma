@@ -1,6 +1,6 @@
 from sqlalchemy import MetaData
 from sqlalchemy.dialects.postgresql import TIMESTAMP, INTEGER
-from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column, declarative_base
+from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
 from sqlalchemy.sql import func
 
 convention = {
@@ -13,7 +13,6 @@ convention = {
     "fk": "fk__%(table_name)s__%(all_column_names)s__%(referred_table_name)s",
     "pk": "pk__%(table_name)s",
 }
-_Base = declarative_base()
 my_metadata = MetaData(naming_convention=convention)
 
 
