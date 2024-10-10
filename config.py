@@ -17,18 +17,18 @@ else:
 
 
 class StaticConfig(BaseModel):
-    TEMPLATES_PATH: Path = os.path.join(Path(__file__).parent, 'src', 'templates')
-    STATIC_PATH: Path = os.path.join(Path(__file__).parent, 'web', 'static')
-    IMAGES_PATH: Path = os.path.join(Path(__file__).parent, 'web', 'static', 'images')
+    TEMPLATES_PATH: str = os.path.join(Path(__file__).parent, 'src', 'templates')
+    STATIC_PATH: str = os.path.join(Path(__file__).parent, 'web', 'static')
+    IMAGES_PATH: str = os.path.join(Path(__file__).parent, 'web', 'static', 'images')
 
 
 class PostgresDbConfig(BaseModel):
-    _db_name: str = os.getenv('DB_NAME')
-    _dialect_db: str = os.getenv('DIALECT_DB')
-    _driver_db: str = os.getenv('DRIVER_DB')
-    _user_name_db: str = os.getenv('USER_NAME_DB')
-    _user_pass_db: str = os.getenv('USER_PASS_DB')
-    _host_db: str = os.getenv('HOST_DB')
+    _db_name: str | None = os.getenv('DB_NAME')
+    _dialect_db: str | None = os.getenv('DIALECT_DB')
+    _driver_db: str | None = os.getenv('DRIVER_DB')
+    _user_name_db: str | None = os.getenv('USER_NAME_DB')
+    _user_pass_db: str | None = os.getenv('USER_PASS_DB')
+    _host_db: str | None = os.getenv('HOST_DB')
 
     url_db_asyncpg: str = f"{_dialect_db}+{_driver_db}://{_user_name_db}:{_user_pass_db}@{_host_db}/{_db_name}"
 

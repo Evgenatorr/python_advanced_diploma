@@ -1,12 +1,17 @@
 from sqlalchemy import ForeignKey
+from sqlalchemy.dialects.postgresql import INTEGER, VARCHAR
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import VARCHAR, INTEGER
+
 from src.database.models.base_model import MyBase
 
 
 class Like(MyBase):
-    name: Mapped[VARCHAR] = mapped_column(VARCHAR, nullable=False)
-    user_id: Mapped[INTEGER] = mapped_column(INTEGER, ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    name: Mapped[str] = mapped_column(VARCHAR, nullable=False)
+    user_id: Mapped[int] = mapped_column(
+        INTEGER, ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+    )
 
-    tweet_id: Mapped[INTEGER] = mapped_column(INTEGER, ForeignKey('tweet.id', ondelete='CASCADE'), nullable=False)
+    tweet_id: Mapped[int] = mapped_column(
+        INTEGER, ForeignKey("tweet.id", ondelete="CASCADE"), nullable=False
+    )
     # tweet = relationship(argument='Tweet', back_populates='likes')

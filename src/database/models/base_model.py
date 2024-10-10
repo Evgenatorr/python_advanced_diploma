@@ -1,6 +1,7 @@
 from sqlalchemy import MetaData
-from sqlalchemy.dialects.postgresql import TIMESTAMP, INTEGER
-from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import INTEGER, TIMESTAMP
+from sqlalchemy.orm import (DeclarativeBase, Mapped, declared_attr,
+                            mapped_column)
 from sqlalchemy.sql import func
 
 convention = {
@@ -13,7 +14,6 @@ convention = {
     "fk": "fk__%(table_name)s__%(all_column_names)s__%(referred_table_name)s",
     "pk": "pk__%(table_name)s",
 }
-my_metadata = MetaData(naming_convention=convention)
 
 
 class MyBase(DeclarativeBase):
@@ -22,8 +22,12 @@ class MyBase(DeclarativeBase):
         # The table name is derived from the class name in lowercase
         return cls.__name__.lower()
 
-    metadata = my_metadata  # type: ignore
+    metadata = MetaData(naming_convention=convention)  # type: ignore
 
-    id: Mapped[INTEGER] = mapped_column(INTEGER, primary_key=True, index=True)
-    created_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP(timezone=True), default=func.now())
-    updated_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP(timezone=True), default=func.now(), onupdate=func.now())
+    id: Mapped[int] = mapped_column(INTEGER, primary_key=True, index=True)
+    created_at: Mapped[TIMESTAMP] = mapped_column(
+        TIMESTAMP(timezone=True), default=func.now()
+    )
+    updated_at: Mapped[TIMESTAMP] = mapped_column(
+        TIMESTAMP(timezone=True), default=func.now(), onupdate=func.now()
+    )

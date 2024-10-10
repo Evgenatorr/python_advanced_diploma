@@ -1,20 +1,20 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.auth.secure_user import get_user_by_secure_key
+
 from src import crud, schemas
+from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
 
-router: APIRouter = APIRouter(tags=['DELETE'])
+router: APIRouter = APIRouter(tags=["DELETE"])
 
 
-@router.delete(
-    "/api/tweets/{tweet_id}", status_code=status.HTTP_200_OK
-)
+@router.delete("/api/tweets/{tweet_id}", status_code=status.HTTP_200_OK)
 async def delete_tweet(
-        tweet_id: int, session: AsyncSession = Depends(get_async_session),
-        current_user: schemas.user.UserResponse = Depends(get_user_by_secure_key)
+    tweet_id: int,
+    session: AsyncSession = Depends(get_async_session),
+    current_user: schemas.user.UserResponse = Depends(get_user_by_secure_key),
 ) -> JSONResponse:
     """
     Роутер удаления твита из базы данных

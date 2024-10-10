@@ -1,4 +1,5 @@
 from typing import Type
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models.media_model import Media
@@ -9,7 +10,9 @@ class MediaCrud:
     def __init__(self, model: Type[Media]) -> None:
         self.model: Type[Media] = model
 
-    async def get(self, session: AsyncSession, media_id: int | list[int]) -> Media | None:
+    async def get(
+        self, session: AsyncSession, media_id: int | list[int]
+    ) -> Media | None:
         """
         Функция получения Media объекта из таблицы по первичному ключу
         :param session: асинхронная сессия базы данных

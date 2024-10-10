@@ -1,11 +1,8 @@
 import contextlib
 from typing import AsyncIterator, Optional
-from sqlalchemy.ext.asyncio import (
-    AsyncEngine,
-    AsyncSession,
-    async_sessionmaker,
-    create_async_engine,
-)
+
+from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
+                                    async_sessionmaker, create_async_engine)
 
 
 class DatabaseSessionManager:
@@ -21,7 +18,7 @@ class DatabaseSessionManager:
         """
         # настроим аргументы подключения при необходимости
         if "postgresql" in db_url:
-            connect_args = {
+            connect_args: dict[str, int | str] = {
                 # "statement_cache_size": 0,
                 # "prepared_statement_cache_size": 0,
             }
@@ -46,7 +43,7 @@ class DatabaseSessionManager:
         self._async_sessionmaker = None
 
     @contextlib.asynccontextmanager
-    async def gen_async_session(self) -> AsyncIterator[AsyncSession]:
+    async def async_session(self) -> AsyncIterator[AsyncSession]:
         if self._async_sessionmaker is None:
             raise IOError("DatabaseSessionManager is not initialized")
         async with self._async_sessionmaker() as session:
@@ -55,12 +52,6 @@ class DatabaseSessionManager:
             except Exception:
                 await session.rollback()
                 raise
-
-    async def async_session(self) -> AsyncSession:
-        if self._async_sessionmaker is None:
-            raise IOError("DatabaseSessionManager is not initialized")
-        async with self._async_sessionmaker() as session:
-            return session
 
 
 db_manager: DatabaseSessionManager = DatabaseSessionManager()

@@ -1,28 +1,23 @@
-from typing import List
-from sqlalchemy import JSON, Table, ForeignKey, Column
+from sqlalchemy import Column, ForeignKey, Table
+from sqlalchemy.dialects.postgresql import INTEGER, VARCHAR
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.database.models.base_model import MyBase
-from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
-from sqlalchemy.dialects.postgresql import VARCHAR, ARRAY, INTEGER
 
-
-# user_following = Table(
-#     'user_following', MyBase.metadata,
-#     Column('user_id', INTEGER, ForeignKey('user.id'), primary_key=True),
-#     Column('following_id', INTEGER, ForeignKey('user.id'), primary_key=True)
-# )
 
 user_following = Table(
-    'user_following', MyBase.metadata,
-    Column('followers_id', INTEGER, ForeignKey('user.id'), primary_key=True),
-    Column('following_id', INTEGER, ForeignKey('user.id'), primary_key=True)
+    "user_following",
+    MyBase.metadata,
+    Column("followers_id", INTEGER, ForeignKey("user.id"), primary_key=True),
+    Column("following_id", INTEGER, ForeignKey("user.id"), primary_key=True),
 )
 
 
 class User(MyBase):
-    name: Mapped[VARCHAR] = mapped_column(VARCHAR(50), nullable=False)
+    name: Mapped[str] = mapped_column(VARCHAR(50), nullable=False)
 
-    tweets = relationship(argument='Tweet', back_populates='author', lazy='selectin')
-    api_key = relationship(argument='ApiKey', back_populates='user', lazy='selectin')
+    tweets = relationship(argument="Tweet", back_populates="author", lazy="selectin")
+    api_key = relationship(argument="ApiKey", back_populates="user", lazy="selectin")
     # following: Mapped[ARRAY] = mapped_column(ARRAY(JSON), nullable=True)
     # followers: Mapped[ARRAY] = mapped_column(ARRAY(JSON), nullable=True)
     # following = relationship(
@@ -35,19 +30,20 @@ class User(MyBase):
     following = relationship(
         "User",
         secondary=user_following,
-        primaryjoin='User.id == user_following.c.followers_id',
-        secondaryjoin='User.id == user_following.c.following_id',
+        primaryjoin="User.id == user_following.c.followers_id",
+        secondaryjoin="User.id == user_following.c.following_id",
         back_populates="followers",
-        lazy='dynamic',
+        lazy="dynamic",
     )
     followers = relationship(
         "User",
         secondary=user_following,
-        primaryjoin='User.id == user_following.c.following_id',
-        secondaryjoin='User.id == user_following.c.followers_id',
+        primaryjoin="User.id == user_following.c.following_id",
+        secondaryjoin="User.id == user_following.c.followers_id",
         back_populates="following",
-        lazy='dynamic',
+        lazy="dynamic",
     )
+
 
 # following: Mapped[List['User']] = relationship(
 #     'User',

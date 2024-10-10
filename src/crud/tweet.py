@@ -1,7 +1,8 @@
-from typing import Type, Sequence
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Result, func, desc
+from typing import Sequence, Type
+
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import Result, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models.tweet_model import Tweet
 from src.schemas.tweet import TweetUpdateRequest
@@ -23,7 +24,9 @@ class TweetCrud:
         query: Tweet | None = await session.get(self.model, tweet_id)
         return query
 
-    async def get_list_by_user_id(self, session: AsyncSession, user_id: int) -> Sequence[Tweet]:
+    async def get_list_by_user_id(
+        self, session: AsyncSession, user_id: int
+    ) -> Sequence[Tweet]:
         """
         Функция получения объекта Tweet из таблицы по id пользователя
         :param session: асинхронная сессия базы данных
@@ -32,8 +35,7 @@ class TweetCrud:
         """
 
         query: Result[tuple[Tweet]] = await session.execute(
-            select(self.model)
-            .where(self.model.author_id == user_id)
+            select(self.model).where(self.model.author_id == user_id)
         )
         return query.scalars().all()
 
@@ -56,10 +58,11 @@ class TweetCrud:
         :return: Tweet
         """
 
-        tweet: Tweet = self.model(
-            **tweet_data
+        tweet: Tweet = self.model(**tweet_data)
+        setattr(
+            tweet, 'author_id', author_id
         )
-        tweet.author_id = author_id
+
         session.add(tweet)
         await session.commit()
         await session.refresh(tweet)
@@ -84,7 +87,11 @@ class TweetCrud:
         return db_obj
 
     @staticmethod
-    async def update(session: AsyncSession, current_tweet_data: Tweet, new_tweet_data: TweetUpdateRequest) -> Tweet:
+    async def update(
+        session: AsyncSession,
+        current_tweet_data: Tweet,
+        new_tweet_data: TweetUpdateRequest,
+    ) -> Tweet:
         """
         Функция обновления записи в таблице tweet
         :param session: асинхронная сессия базы данных
@@ -98,7 +105,9 @@ class TweetCrud:
 
         for field in tweet_data:
             if field in update_data:
-                setattr(current_tweet_data, field, update_data[field])  # current_tweet_data.field = update_data[field]
+                setattr(
+                    current_tweet_data, field, update_data[field]
+                )  # current_tweet_data.field = update_data[field]
 
         session.add(current_tweet_data)
         await session.commit()

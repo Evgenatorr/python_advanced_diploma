@@ -1,4 +1,5 @@
 from typing import Optional
+
 from src.schemas.base_api_schema import APIBaseFailedSchema
 
 

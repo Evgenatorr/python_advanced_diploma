@@ -1,14 +1,14 @@
-from fastapi import FastAPI
 import contextlib
 from typing import AsyncIterator
+
+from fastapi import FastAPI
+
 from config import settings
+from src.routes import (create_tweet, create_user, delete_follow, delete_like,
+                        delete_tweet, follow, get_tweet, get_user,
+                        get_user_by_id, like_tweet, load_media_for_tweet)
+
 from .database.session_manager import db_manager
-from src.routes import (
-    create_user, create_tweet,
-    get_user, get_user_by_id, get_tweet,
-    like_tweet, delete_like, load_media_for_tweet,
-    delete_tweet, follow, delete_follow
-)
 
 
 @contextlib.asynccontextmanager
@@ -18,10 +18,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await db_manager.close()
 
 
-app: FastAPI = FastAPI(
-    title="Clone twitter",
-    lifespan=lifespan
-)
+app: FastAPI = FastAPI(title="Clone twitter", lifespan=lifespan)
 
 app.include_router(create_user.router)
 app.include_router(create_tweet.router)

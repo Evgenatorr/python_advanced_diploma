@@ -1,9 +1,9 @@
-from typing import Literal, Optional
-from pydantic import BaseModel, ConfigDict, Field, field_validator
-from sqlalchemy.orm import AppenderQuery
-from src.database.session_manager import db_manager
-from src.schemas.tweet import TweetResponse
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, Field
+
 from src.schemas.base_api_schema import APIBaseSuccessfulSchema
+from src.schemas.tweet import TweetResponse
 
 
 class UserBase(BaseModel):

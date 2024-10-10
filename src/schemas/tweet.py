@@ -1,5 +1,7 @@
+from typing import List, Optional
+
 from pydantic import BaseModel, ConfigDict
-from typing import Literal, Optional, List
+
 from src.schemas.base_api_schema import APIBaseSuccessfulSchema
 
 

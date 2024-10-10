@@ -1,6 +1,7 @@
 from typing import Type
+
+from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Result
 
 from src.database.models.like_model import Like
 
@@ -10,7 +11,7 @@ class LikeCrud:
     def __init__(self, model: Type[Like]) -> None:
         self.model: Type[Like] = model
 
-    async def get(self, session: AsyncSession, like_id: int) -> Like:
+    async def get(self, session: AsyncSession, like_id: int) -> Like | None:
         """
         Функция получения объекта Like по первичному ключу
         :param session: асинхронная сессия базы данных
@@ -21,7 +22,9 @@ class LikeCrud:
         query: Like | None = await session.get(self.model, like_id)
         return query
 
-    async def get_by_user_id_and_tweet_id(self, session: AsyncSession, tweet_id: int, user_id: int) -> Like:
+    async def get_by_user_id_and_tweet_id(
+        self, session: AsyncSession, tweet_id: int, user_id: int
+    ) -> Like | None:
         """
         Функция получения объекта Like по id пользователя и id твита
         :param session: асинхронная сессия базы данных
@@ -31,8 +34,7 @@ class LikeCrud:
         """
 
         query: Result[tuple[Like]] = await session.execute(
-            select(self.model)
-            .where(
+            select(self.model).where(
                 self.model.tweet_id == tweet_id,
                 self.model.user_id == user_id,
             )

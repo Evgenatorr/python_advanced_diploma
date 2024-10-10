@@ -1,8 +1,9 @@
-from typing import Type, Sequence
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, ScalarResult, Result
-from sqlalchemy.orm import AppenderQuery
+from typing import Sequence, Type
+
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import Result, ScalarResult, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import AppenderQuery
 
 from src.database.models.user_model import User
 from src.schemas.user import UserUpdateRequest
@@ -25,7 +26,9 @@ class UserCrud:
         return query
 
     @staticmethod
-    async def get_list_followers_by_user(session: AsyncSession, user: User) -> ScalarResult:
+    async def get_list_followers_by_user(
+        session: AsyncSession, user: User
+    ) -> ScalarResult:
         """
         Функция получения подписчиков пользователя
         :param session: асинхронная сессия базы данных
@@ -38,7 +41,9 @@ class UserCrud:
         return followers
 
     @staticmethod
-    async def get_list_following_by_user(session: AsyncSession, user: User) -> ScalarResult:
+    async def get_list_following_by_user(
+        session: AsyncSession, user: User
+    ) -> ScalarResult:
         """
         Функция получения подписок пользователя
         :param session: асинхронная сессия базы данных
@@ -93,7 +98,9 @@ class UserCrud:
         return db_obj
 
     @staticmethod
-    async def update(session: AsyncSession, current_user_data: User, new_user_data: UserUpdateRequest) -> User:
+    async def update(
+        session: AsyncSession, current_user_data: User, new_user_data: UserUpdateRequest
+    ) -> User:
         """
         Функция обновления записи в таблице user
         :param session: асинхронная сессия базы данных
@@ -106,7 +113,9 @@ class UserCrud:
         update_data = new_user_data.model_dump(exclude_unset=True)
         for field in user_data:
             if field in update_data:
-                setattr(current_user_data, field, update_data[field])  # current_user_data.field = update_data[field]
+                setattr(
+                    current_user_data, field, update_data[field]
+                )  # current_user_data.field = update_data[field]
 
         session.add(current_user_data)
         await session.commit()
