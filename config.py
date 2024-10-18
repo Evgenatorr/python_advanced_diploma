@@ -5,7 +5,6 @@ from pydantic_settings import BaseSettings
 from pydantic import BaseModel
 from pathlib import Path
 
-
 dotenv_path: str = os.path.join(os.path.dirname(__file__), '.env')
 
 if os.path.exists(dotenv_path):
@@ -33,17 +32,30 @@ class PostgresDbConfig(BaseModel):
     url_db_asyncpg: str = f"{_dialect_db}+{_driver_db}://{_user_name_db}:{_user_pass_db}@{_host_db}/{_db_name}"
 
 
+class PostgresTestDbConfig(BaseModel):
+    _test_db_name: str | None = os.getenv('TEST_DB_NAME')
+    _test_dialect_db: str | None = os.getenv('TEST_DIALECT_DB')
+    _test_driver_db: str | None = os.getenv('TEST_DRIVER_DB')
+    _test_user_name_db: str | None = os.getenv('TEST_USER_NAME_DB')
+    _test_user_pass_db: str | None = os.getenv('TEST_USER_PASS_DB')
+    _test_host_db: str | None = os.getenv('TEST_HOST_DB')
+
+    test_url_db_pgsync: str = (f"{_test_dialect_db}+{_test_driver_db}://{_test_user_name_db}:"
+                               f"{_test_user_pass_db}@{_test_host_db}/{_test_db_name}")
+
+
 class Settings(BaseSettings):
     """
     Base settings for program.
     """
+    START: str | None = os.getenv('START')
     API_KEY_HEADER: APIKeyHeader = APIKeyHeader(name="api-key")
     APP_BASE_HOST: str = 'fastapi'
     APP_BASE_PORT: int = 8000
     APP_BASE_URL: str = f'http://{APP_BASE_HOST}:{APP_BASE_PORT}'
     BASE_DIR: Path = Path(__file__).parent
-    api_v1_prefix: str = "/api/v1"
     db: PostgresDbConfig = PostgresDbConfig()
+    db_test: PostgresTestDbConfig = PostgresTestDbConfig()
     static: StaticConfig = StaticConfig()
 
 

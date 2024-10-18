@@ -37,15 +37,13 @@ async def get_tweet(
             status_code=status.HTTP_404_NOT_FOUND,
         )
 
-    following = await crud.user.user_crud.get_list_following_by_user(
-        session=session, user=user_in_db
-    )
+    following = [{"id": following.id, "name": following.name} for following in user_in_db.following]
 
     tweets_following_user = [
         await crud.tweet.tweet_crud.get_list_by_user_id(
-            session=session, user_id=user.id
+            session=session, user_id=user.get('id')
         )
-        for user in following.all()
+        for user in following
     ]
 
     if tweets_following_user:

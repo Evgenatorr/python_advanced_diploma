@@ -24,7 +24,7 @@ async def delete_like(
     :return: JSONResponse
     """
 
-    like: Like = await crud.like.like_crud.get_by_user_id_and_tweet_id(
+    like: Like | None = await crud.like.like_crud.get_by_user_id_and_tweet_id(
         session=session,
         user_id=current_user.id,
         tweet_id=tweet_id,

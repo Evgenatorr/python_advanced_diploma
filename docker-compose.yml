@@ -15,12 +15,26 @@ services:
     networks:
       - backend
 
+  db_test:
+    container_name: "test_db"
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_NAME=${TEST_USER_NAME_DB}
+      - POSTGRES_PASSWORD=${TEST_USER_PASS_DB}
+      - POSTGRES_DB=${TEST_DB_NAME}
+      - PGDATA=./data/test_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./data/test_db:/var/lib/postgresql/data
+    networks:
+      - backend
+
   fastapi:
     container_name: "fastapi_tweeter_clone"
     build:
       dockerfile: src/Dockerfile
-    #    expose:
-    #      - 8000
     command: uvicorn src.loader:app --reload --host 0.0.0.0
     env_file:
       - ./.env

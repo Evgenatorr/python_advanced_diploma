@@ -24,7 +24,7 @@ async def delete_tweet(
     :return: JSONResponse
     """
 
-    tweet: Tweet = await crud.tweet.tweet_crud.get(session=session, tweet_id=tweet_id)
+    tweet: Tweet | None = await crud.tweet.tweet_crud.get(session=session, tweet_id=tweet_id)
 
     if tweet and tweet.author_id == current_user.id:
         await crud.tweet.tweet_crud.delete(session=session, tweet_id=tweet_id)

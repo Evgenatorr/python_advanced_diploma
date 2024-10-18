@@ -12,7 +12,8 @@ from src.database.async_session import get_async_session
 router = APIRouter(tags=["POST"])
 
 
-@router.post("/api/tweets", status_code=status.HTTP_201_CREATED)
+@router.post("/api/tweets", status_code=status.HTTP_201_CREATED,
+             description='Роутер для создания нового твита')
 async def create_tweet(
     tweet_data: schemas.tweet.TweetCreateRequest,
     session: AsyncSession = Depends(get_async_session),
@@ -25,12 +26,10 @@ async def create_tweet(
     :param current_user: пользователь прошедший аутентификацию
     :return: JSONResponse
     """
-
     media_id: list[int] | None = (
         tweet_data.tweet_media_ids if tweet_data.tweet_media_ids else None
     )
-
-    media: models.media_model.Media = await crud.media.media_crud.get(
+    media: models.media_model.Media | None = await crud.media.media_crud.get(
         session=session, media_id=media_id
     )
     media_link: List[str] | None = [media.file_link] if media else None

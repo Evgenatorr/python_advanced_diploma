@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
-from sqlalchemy import ScalarResult
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.crud.user import user_crud
@@ -25,12 +24,8 @@ async def check_user(
     user: User | None = await user_crud.get(session=session, user_id=user_id)
 
     if user:
-        following: ScalarResult = await user_crud.get_list_following_by_user(
-            session=session, user=user
-        )
-        followers: ScalarResult = await user_crud.get_list_followers_by_user(
-            session=session, user=user
-        )
+        followers = [{"id": follower.id, "name": follower.name} for follower in user.followers]
+        following = [{"id": following.id, "name": following.name} for following in user.following]
         response_model = UserResponse(
             followers=followers, following=following, name=user.name, id=user.id
         )

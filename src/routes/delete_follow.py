@@ -24,11 +24,11 @@ async def subscription(
     :return: JSONResponse
     """
 
-    user_in_db: User = await crud.user.user_crud.get(session=session, user_id=user_id)
-    current_user_in_db: User = await crud.user.user_crud.get(
+    user_in_db: User | None = await crud.user.user_crud.get(session=session, user_id=user_id)
+    current_user_in_db: User | None = await crud.user.user_crud.get(
         session=session, user_id=current_user.id
     )
-    if user_in_db:
+    if user_in_db and current_user_in_db:
         current_user_in_db.following.remove(user_in_db)
         await session.refresh(current_user_in_db)
         await session.commit()
@@ -39,3 +39,10 @@ async def subscription(
             },
             status_code=status.HTTP_200_OK,
         )
+
+    return JSONResponse(
+        content={
+            "result": "false",
+        },
+        status_code=status.HTTP_404_NOT_FOUND,
+    )

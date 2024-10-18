@@ -10,7 +10,6 @@ python = "^3.12"
 fastapi = "^0.114.0"
 python-dotenv = "^1.0.1"
 pydantic-settings = "^2.4.0"
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.34"}
 alembic = "^1.13.2"
 asyncpg = "^0.29.0"
 uvicorn = "^0.30.6"
@@ -18,6 +17,10 @@ jinja2 = "^3.1.4"
 python-multipart = "^0.0.9"
 aiofiles = "^24.1.0"
 types-aiofiles = "^24.1.0.20240626"
+sqlalchemy = "^2.0.32"
+psycopg2-binary = "^2.9.9"
+pytest-asyncio = "^0.24.0"
+anyio = "^4.6.2.post1"
 
 
 [tool.poetry.group.dev.dependencies]

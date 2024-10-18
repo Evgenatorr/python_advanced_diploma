@@ -1,9 +1,9 @@
 from typing import Sequence, Type
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import Result, ScalarResult, select
+from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import AppenderQuery
+from sqlalchemy.orm import selectinload
 
 from src.database.models.user_model import User
 from src.schemas.user import UserUpdateRequest
@@ -22,38 +22,14 @@ class UserCrud:
         :return: User | None
         """
 
-        query: User | None = await session.get(self.model, user_id)
-        return query
-
-    @staticmethod
-    async def get_list_followers_by_user(
-        session: AsyncSession, user: User
-    ) -> ScalarResult:
-        """
-        Функция получения подписчиков пользователя
-        :param session: асинхронная сессия базы данных
-        :param user: объект User
-        :return: ScalarResult
-        """
-
-        query: AppenderQuery = user.followers
-        followers: ScalarResult = await session.scalars(query)
-        return followers
-
-    @staticmethod
-    async def get_list_following_by_user(
-        session: AsyncSession, user: User
-    ) -> ScalarResult:
-        """
-        Функция получения подписок пользователя
-        :param session: асинхронная сессия базы данных
-        :param user: объект User
-        :return: ScalarResult
-        """
-
-        query: AppenderQuery = user.following
-        following: ScalarResult = await session.scalars(query)
-        return following
+        # query: User | None = await session.get(self.model, user_id)
+        # return query
+        query: Result[tuple[User]] = await session.execute(
+            select(self.model).where(
+                self.model.id == user_id,
+            ).options(selectinload(self.model.followers), selectinload(self.model.following))
+        )
+        return query.scalar()
 
     async def get_list(self, session: AsyncSession) -> Sequence[User]:
         """
@@ -99,7 +75,7 @@ class UserCrud:
 
     @staticmethod
     async def update(
-        session: AsyncSession, current_user_data: User, new_user_data: UserUpdateRequest
+            session: AsyncSession, current_user_data: User, new_user_data: UserUpdateRequest
     ) -> User:
         """
         Функция обновления записи в таблице user

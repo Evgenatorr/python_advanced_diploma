@@ -3,17 +3,17 @@ from typing import AsyncIterator
 
 from fastapi import FastAPI
 
-from config import settings
 from src.routes import (create_tweet, create_user, delete_follow, delete_like,
                         delete_tweet, follow, get_tweet, get_user,
                         get_user_by_id, like_tweet, load_media_for_tweet)
 
 from .database.session_manager import db_manager
+from src.utils.get_db_url import get_database_url
 
 
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    db_manager.init(settings.db.url_db_asyncpg)
+    db_manager.init(get_database_url())
     yield
     await db_manager.close()
 

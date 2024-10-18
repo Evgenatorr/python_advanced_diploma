@@ -1,5 +1,4 @@
 from fastapi import Depends, HTTPException, Security, status
-from sqlalchemy import ScalarResult
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
@@ -24,14 +23,10 @@ async def get_user_by_secure_key(
         await crud.api_key.api_key_crud.get_by_apikey(session=session, api_key=api_key)
     )
     if api_key_db:
-        user: models.user_model.User = api_key_db.user
+        user: models.user_model.User | None = await crud.user.user_crud.get(session=session, user_id=api_key_db.user_id)
+        followers = [{"id": follower.id, "name": follower.name} for follower in user.followers]
+        following = [{"id": following.id, "name": following.name} for following in user.following]
 
-        followers: ScalarResult = await crud.user.user_crud.get_list_followers_by_user(
-            session=session, user=user
-        )
-        following: ScalarResult = await crud.user.user_crud.get_list_following_by_user(
-            session=session, user=user
-        )
         user_response: UserResponse = UserResponse(
             id=user.id,
             name=user.name,

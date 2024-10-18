@@ -11,7 +11,7 @@ class MediaCrud:
         self.model: Type[Media] = model
 
     async def get(
-        self, session: AsyncSession, media_id: int | list[int]
+        self, session: AsyncSession, media_id: list[int] | int
     ) -> Media | None:
         """
         Функция получения Media объекта из таблицы по первичному ключу
