@@ -9,15 +9,6 @@ from src.schemas.tweet import TweetResponse
 class UserBase(BaseModel):
     name: str = Field(max_length=50)
 
-    # @field_validator("*", mode='before')
-    # def evaluate_lazy_columns(cls, v):
-    #     if isinstance(v, AppenderQuery):
-    #         async_session = db_manager.async_session()
-    #         result = async_session.scalars(v)
-    #         print(result)
-    #         return result
-    #     return v
-
 
 class UserCreate(UserBase):
     ...
@@ -43,7 +34,3 @@ class UserUpdateRequest(UserBase):
 
 class APIUserResponseSuccessful(APIBaseSuccessfulSchema):
     user: UserResponse
-
-
-class APIUserListResponseSuccessful(APIBaseSuccessfulSchema):
-    data: list[UserResponse]

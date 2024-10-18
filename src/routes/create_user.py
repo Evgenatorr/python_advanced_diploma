@@ -26,8 +26,8 @@ async def create_user(
     user: User = await crud.user.user_crud.post(
         session=session, user_data=user_data.model_dump()
     )
-    random_api_key: str = str(uuid.uuid4())
-    # random_api_key = "test"
+    # random_api_key: str = str(uuid.uuid4())
+    random_api_key: str = 'test'
     api_data: dict[str, str | int] = {"api_key": random_api_key, "user_id": user.id}
     await crud.api_key.api_key_crud.post(session=session, api_key_data=api_data)
     await session.refresh(user)

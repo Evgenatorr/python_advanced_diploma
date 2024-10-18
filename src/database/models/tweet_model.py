@@ -11,9 +11,6 @@ class Tweet(MyBase):
     author_id: Mapped[int] = mapped_column(
         INTEGER, ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
-    # media_id: Mapped[INTEGER] = mapped_column(
-    #     INTEGER, ForeignKey('media.id'), nullable=True
-    # )
 
     media = relationship(
         argument="Media", backref="tweet", lazy="selectin", cascade="all, delete"
@@ -22,7 +19,3 @@ class Tweet(MyBase):
         argument="Like", backref="tweet", lazy="selectin", cascade="all, delete"
     )
     author = relationship(argument="User", back_populates="tweets", lazy="selectin")
-
-    # def __repr__(self) -> str:
-    #     return (f"Tweet(id={self.id}, tweet_data={self.tweet_data}, "
-    #             f"likes={self.likes}, author={self.author}))")

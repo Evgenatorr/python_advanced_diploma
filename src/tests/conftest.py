@@ -14,36 +14,31 @@ from config import settings
 from src.loader import app
 from src.database.models.base_model import MyBase
 
-test_base = MyBase
+
 # @pytest.fixture(scope='session')
 # async def init_db():
 #     db_manager.init(get_database_url())
 #     yield
 #     await db_manager.close()
 
+
 @pytest.fixture(scope='session')
-async def init_db():
-    print(os.environ["START"])
-    engine = create_async_engine(url=settings.db_test.test_url_db_pgsync, pool_pre_ping=True,)
+async def create_db():
+    engine = create_async_engine(url=settings.db_test.test_url_db_asyncpg, pool_pre_ping=True, )
     session_maker = async_sessionmaker(bind=engine, expire_on_commit=False,)
     session = session_maker()
-
-    async with engine.begin() as conn:
-        await conn.run_sync(MyBase.metadata.create_all)
     await session.close()
     await engine.dispose()
-
+    async with engine.begin() as conn:
+        await conn.run_sync(MyBase.metadata.drop_all)
+        await conn.run_sync(MyBase.metadata.create_all)
     yield
-
     async with engine.begin() as conn:
         await conn.run_sync(MyBase.metadata.drop_all)
 
+
 @pytest.fixture(scope='function')
-async def client(init_db):
-# def client() -> TestClient:
-#     with TestClient(
-#             app=app, base_url=settings.APP_BASE_URL
-#     ) as c:
+async def client(create_db):
     async with AsyncClient(
             transport=ASGITransport(app=app), base_url=settings.APP_BASE_URL
     ) as c:

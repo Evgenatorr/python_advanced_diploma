@@ -1,7 +1,5 @@
 from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from src.database.session_manager import db_manager
 
 

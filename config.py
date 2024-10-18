@@ -40,15 +40,14 @@ class PostgresTestDbConfig(BaseModel):
     _test_user_pass_db: str | None = os.getenv('TEST_USER_PASS_DB')
     _test_host_db: str | None = os.getenv('TEST_HOST_DB')
 
-    test_url_db_pgsync: str = (f"{_test_dialect_db}+{_test_driver_db}://{_test_user_name_db}:"
-                               f"{_test_user_pass_db}@{_test_host_db}/{_test_db_name}")
+    test_url_db_asyncpg: str = (f"{_test_dialect_db}+{_test_driver_db}://{_test_user_name_db}:"
+                                f"{_test_user_pass_db}@{_test_host_db}/{_test_db_name}")
 
 
 class Settings(BaseSettings):
     """
     Base settings for program.
     """
-    START: str | None = os.getenv('START')
     API_KEY_HEADER: APIKeyHeader = APIKeyHeader(name="api-key")
     APP_BASE_HOST: str = 'fastapi'
     APP_BASE_PORT: int = 8000

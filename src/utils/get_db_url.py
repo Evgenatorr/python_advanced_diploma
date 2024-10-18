@@ -1,3 +1,4 @@
+import os
 from config import settings
 
 
@@ -6,8 +7,7 @@ def get_database_url() -> str:
     Функция получения url базы данных
     :return: str
     """
-    print(settings.START)
-    if settings.START == "test":
-        return settings.db_test.test_url_db_pgsync
+    if os.environ.get('START') == "test":
+        return settings.db_test.test_url_db_asyncpg
 
     return settings.db.url_db_asyncpg

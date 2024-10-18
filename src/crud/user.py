@@ -16,7 +16,7 @@ class UserCrud:
 
     async def get(self, session: AsyncSession, user_id: int) -> User | None:
         """
-        Функция получения объекта User из таблицы по первичному ключу
+        Функция получения объекта User из таблицы по первичному ключу с загрузкой связанных данных
         :param session: асинхронная сессия базы данных
         :param user_id: первичный ключ таблицы
         :return: User | None
