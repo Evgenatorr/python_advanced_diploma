@@ -26,12 +26,11 @@ async def create_tweet(
     :param current_user: пользователь прошедший аутентификацию
     :return: JSONResponse
     """
-    media_id: list[int] | None = (
-        tweet_data.tweet_media_ids if tweet_data.tweet_media_ids else None
-    )
+
     media: models.media_model.Media | None = await crud.media.media_crud.get(
-        session=session, media_id=media_id
-    )
+        session=session, media_id=tweet_data.tweet_media_ids
+    ) if tweet_data.tweet_media_ids else None
+
     media_link: List[str] | None = [media.file_link] if media else None
 
     data_dict: dict[str, str | list[str] | None] = {

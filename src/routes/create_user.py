@@ -14,8 +14,8 @@ router = APIRouter(tags=["POST"])
 
 @router.post("/api/users", status_code=status.HTTP_201_CREATED)
 async def create_user(
-    user_data: UserCreate = Depends(),
-    session: AsyncSession = Depends(get_async_session),
+        user_data: UserCreate = Depends(),
+        session: AsyncSession = Depends(get_async_session),
 ) -> JSONResponse:
     """
     Роутер для создания нового пользователя
@@ -32,4 +32,7 @@ async def create_user(
     await crud.api_key.api_key_crud.post(session=session, api_key_data=api_data)
     await session.refresh(user)
     print(f"{random_api_key=}")
-    return JSONResponse(content={"status": "true", "api_key": random_api_key})
+    return JSONResponse(
+        content={"status": "true", "api_key": random_api_key},
+        status_code=status.HTTP_201_CREATED
+    )
