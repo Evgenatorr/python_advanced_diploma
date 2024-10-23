@@ -3,6 +3,7 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import models
+from config import settings
 
 
 # @pytest.mark.asyncio
@@ -22,8 +23,7 @@ from src.database import models
 #     assert response.json()["content"] == "Hello, this is a test tweet!"
 
 
-@pytest.mark.asyncio(loop_scope='session')
-async def test_create_user_and_tweet(async_client: AsyncClient, db_session):
+async def test_create_user_and_tweet(async_client: AsyncClient):
     response = await async_client.post(
         "/api/users",
         params={"name": "test_user"}
@@ -34,17 +34,14 @@ async def test_create_user_and_tweet(async_client: AsyncClient, db_session):
         json={"tweet_data": "This is a test tweet"},
         headers={"api-key": "test"}
     )
-    print(response.json())
     assert response.status_code == 201
 
 
-# async def test_get_user(async_client: AsyncClient):
-#     response = await async_client.get("/api/users/me", headers={"api-key": "test"})
-#     assert response.status_code == 200
-#     json_data = response.json()
-#     print(json_data)
-#
-#
+async def test_get_user(async_client: AsyncClient):
+    response = await async_client.get("/api/users/me", headers={"api-key": "test"})
+    assert response.status_code == 200
+
+
 # async def test_create_tweet_invalid_json(async_client: AsyncClient):
 #     response = await async_client.post("/api/tweets", json={"title": "something"})
 #     assert response.status_code == 422

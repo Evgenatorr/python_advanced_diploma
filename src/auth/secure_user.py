@@ -6,6 +6,7 @@ from src import crud
 from src.database import models
 from src.database.async_session import get_async_session
 from src.schemas.user import UserResponse
+from logging_conf import logger
 
 
 async def get_user_by_secure_key(
@@ -34,6 +35,7 @@ async def get_user_by_secure_key(
             following=following,
             tweets=user.tweets,
         )
+        logger.debug(f'Пользователь с id {user_response.id} успешно прошел аутентификацию')
         return user_response
 
     raise HTTPException(

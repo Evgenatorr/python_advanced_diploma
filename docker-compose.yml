@@ -42,6 +42,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - db_test
     volumes:
       - .:/code
       - ./web/static/images:/usr/share/nginx/html/static/images
@@ -70,4 +71,6 @@ networks:
 
 volumes:
   db:
+    driver: local
+  db_test:
     driver: local

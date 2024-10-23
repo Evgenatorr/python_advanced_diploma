@@ -8,6 +8,7 @@ from src import crud, schemas
 from src.auth.secure_user import get_user_by_secure_key
 from src.database import models
 from src.database.async_session import get_async_session
+from logging_conf import logger
 
 router = APIRouter(tags=["POST"])
 
@@ -48,7 +49,7 @@ async def create_tweet(
     if media:
         media.tweet_id = tweet.id
         await session.commit()
-
+    logger.debug('Твит создан')
     return JSONResponse(
         content={
             "result": "true",

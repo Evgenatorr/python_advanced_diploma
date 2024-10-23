@@ -7,6 +7,7 @@ from src import crud, schemas
 from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.user_model import User
+from logging_conf import logger
 
 router = APIRouter(tags=["GET"])
 
@@ -30,6 +31,7 @@ async def get_tweet(
     tweets = current_user.tweets
     user_in_db: User | None = await crud.user.user_crud.get(session=session, user_id=current_user.id)
     if user_in_db is None or tweets is None:
+        logger.debug(f'Твиты отсутствуют или пользователь не найден')
         return JSONResponse(
             content={
                 "result": "false",

@@ -6,6 +6,7 @@ from src import crud, schemas
 from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.user_model import User
+from logging_conf import logger
 
 router: APIRouter = APIRouter(tags=["POST"])
 
@@ -32,7 +33,8 @@ async def subscription(
         current_user_in_db.following.remove(user_in_db)
         await session.refresh(current_user_in_db)
         await session.commit()
-
+        logger.debug(f'Пользователь с id {current_user_in_db.id} '
+                     f'отписался от пользователя с id {user_in_db.id}')
         return JSONResponse(
             content={
                 "result": "true",
@@ -40,6 +42,7 @@ async def subscription(
             status_code=status.HTTP_200_OK,
         )
 
+    logger.debug(f'Пользователь не найден')
     return JSONResponse(
         content={
             "result": "false",

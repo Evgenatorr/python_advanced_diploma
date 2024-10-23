@@ -8,6 +8,7 @@ from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.media_model import Media
 from src.utils.create_unic_out_path import out_path
+from logging_conf import logger
 
 router = APIRouter(tags=["POST"])
 
@@ -25,7 +26,7 @@ async def load_media(
     async with aiofiles.open(unic_out_path, "wb") as out_file:
         content: bytes = await file.read()
         await out_file.write(content)
-
+    logger.debug('Изображение успешно загружено')
     return unic_out_path
 
 
@@ -48,7 +49,7 @@ async def add_media(
     media: Media = await crud.media.media_crud.post(
         session=session, media_path=path_nginx_image
     )
-
+    logger.debug('Изображение успешно добавлено в базу данных')
     return JSONResponse(
         content={
             "result": "true",
