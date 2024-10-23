@@ -30,6 +30,7 @@ async def init_db():
 #     """
 #     Фикстура для предоставления сессии базы данных в тестах.
 #     """
+#
 #     async with db_manager.async_session() as session:
 #         yield session
 
