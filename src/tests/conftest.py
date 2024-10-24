@@ -1,12 +1,12 @@
 import os
 import pytest
+import asyncio
 
 from asgi_lifespan import LifespanManager
 from httpx import AsyncClient, ASGITransport
 
 os.environ["START"] = "test"
 from src.loader import app
-from config import settings
 from src.database.session_manager import db_manager
 from src.database.models.base_model import MyBase
 
@@ -25,6 +25,14 @@ async def init_db():
             await connection.run_sync(MyBase.metadata.drop_all)
 
 
+@pytest.fixture(scope='session', autouse=True)
+def event_loop(request):
+    """Create an instance of the default event loop for each test case."""
+    loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()
+
+
 # @pytest.fixture(scope="session")
 # async def db_session(test_db):
 #     """
@@ -41,5 +49,5 @@ async def async_client(init_db):
     Фикстура для асинхронного клиента приложения.
     """
     async with LifespanManager(app) as manager:
-        async with AsyncClient(transport=ASGITransport(app=manager.app), base_url=settings.APP_BASE_URL) as client:
+        async with AsyncClient(transport=ASGITransport(app=manager.app), base_url="http://test") as client:
             yield client
