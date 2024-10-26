@@ -16,11 +16,10 @@ setup_logging(LOGGING_CONFIG)
 
 
 @contextlib.asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     db_manager.init(get_database_url())
     logger.info('База инициализирована')
     yield
-    logger.info('База закрыта')
     await db_manager.close()
 
 

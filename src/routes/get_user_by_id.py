@@ -29,8 +29,15 @@ async def check_user(
             detail='User not found'
         )
 
-    followers = [{"id": follower.id, "name": follower.name} for follower in user.followers]
-    following = [{"id": following.id, "name": following.name} for following in user.following]
+    followers = [
+        {"id": follower.id, "name": follower.name}
+        for follower in user.followers
+    ]
+    following = [
+        {"id": following.id, "name": following.name}
+        for following in user.following
+    ]
+
     response_model = UserResponse(
         followers=followers, following=following, name=user.name, id=user.id
     )

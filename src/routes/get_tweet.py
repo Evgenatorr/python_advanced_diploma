@@ -29,9 +29,11 @@ async def get_tweet(
     """
 
     tweets = current_user.tweets
-    user_in_db: User | None = await crud.user.user_crud.get(session=session, user_id=current_user.id)
+    user_in_db: User | None = await crud.user.user_crud.get(
+        session=session, user_id=current_user.id
+    )
     if user_in_db is None or tweets is None:
-        logger.debug(f'Твиты отсутствуют или пользователь не найден')
+        logger.debug('Твиты отсутствуют или пользователь не найден')
         return JSONResponse(
             content={
                 "result": "false",
@@ -39,7 +41,10 @@ async def get_tweet(
             status_code=status.HTTP_404_NOT_FOUND,
         )
 
-    following = [{"id": following.id, "name": following.name} for following in user_in_db.following]
+    following = [
+        {"id": following.id, "name": following.name}
+        for following in user_in_db.following
+    ]
 
     tweets_following_user = [
         await crud.tweet.tweet_crud.get_list_by_user_id(

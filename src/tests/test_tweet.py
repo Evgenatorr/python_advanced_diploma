@@ -58,4 +58,3 @@ async def test_delete_tweet(async_client: AsyncClient):
     )
     assert response.status_code == 200
     assert len(response.json()['tweets']) == 1
-

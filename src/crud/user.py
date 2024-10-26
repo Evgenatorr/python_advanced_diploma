@@ -16,7 +16,8 @@ class UserCrud:
 
     async def get(self, session: AsyncSession, user_id: int) -> User | None:
         """
-        Функция получения объекта User из таблицы по первичному ключу с загрузкой связанных данных
+        Функция получения объекта User из таблицы по первичному ключу
+        с загрузкой связанных данных
         :param session: асинхронная сессия базы данных
         :param user_id: первичный ключ таблицы
         :return: User | None
@@ -27,7 +28,9 @@ class UserCrud:
         query: Result[tuple[User]] = await session.execute(
             select(self.model).where(
                 self.model.id == user_id,
-            ).options(selectinload(self.model.followers), selectinload(self.model.following))
+            ).options(
+                selectinload(self.model.followers), selectinload(self.model.following)
+            )
         )
         return query.scalar()
 
@@ -75,7 +78,8 @@ class UserCrud:
 
     @staticmethod
     async def update(
-            session: AsyncSession, current_user_data: User, new_user_data: UserUpdateRequest
+            session: AsyncSession, current_user_data: User,
+            new_user_data: UserUpdateRequest
     ) -> User:
         """
         Функция обновления записи в таблице user

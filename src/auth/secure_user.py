@@ -10,8 +10,8 @@ from logs_conf.utils import logger
 
 
 async def get_user_by_secure_key(
-    api_key: str = Security(settings.API_KEY_HEADER),
-    session: AsyncSession = Depends(get_async_session),
+        api_key: str = Security(settings.API_KEY_HEADER),
+        session: AsyncSession = Depends(get_async_session),
 ):
     """
     Функция проверяет api_key_header от пользователя
@@ -24,9 +24,17 @@ async def get_user_by_secure_key(
         await crud.api_key.api_key_crud.get_by_apikey(session=session, api_key=api_key)
     )
     if api_key_db:
-        user: models.user_model.User | None = await crud.user.user_crud.get(session=session, user_id=api_key_db.user_id)
-        followers = [{"id": follower.id, "name": follower.name} for follower in user.followers]
-        following = [{"id": following.id, "name": following.name} for following in user.following]
+        user: models.user_model.User | None = await crud.user.user_crud.get(
+            session=session, user_id=api_key_db.user_id
+        )
+        followers = [
+            {"id": follower.id, "name": follower.name}
+            for follower in user.followers
+        ]
+        following = [
+            {"id": following.id, "name": following.name}
+            for following in user.following
+        ]
 
         user_response: UserResponse = UserResponse(
             id=user.id,
@@ -35,7 +43,8 @@ async def get_user_by_secure_key(
             following=following,
             tweets=user.tweets,
         )
-        logger.debug(f'Пользователь с id {user_response.id} успешно прошел аутентификацию')
+        logger.debug(f'Пользователь с id {user_response.id} '
+                     f'успешно прошел аутентификацию')
         return user_response
 
     raise HTTPException(

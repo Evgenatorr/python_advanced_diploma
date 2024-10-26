@@ -1,5 +1,3 @@
-# import logging
-import logging.config
 from typing import AsyncGenerator
 import os
 import pytest
@@ -79,5 +77,7 @@ async def async_client(init_db):
     Фикстура для асинхронного клиента приложения.
     """
     async with LifespanManager(app) as manager:
-        async with AsyncClient(transport=ASGITransport(app=manager.app), base_url="http://test") as client:
+        async with AsyncClient(
+                transport=ASGITransport(app=manager.app), base_url="http://test"
+        ) as client:
             yield client

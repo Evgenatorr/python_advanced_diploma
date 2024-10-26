@@ -25,7 +25,9 @@ async def like_tweet(
     :return: JSONResponse
     """
 
-    tweet: Tweet | None = await crud.tweet.tweet_crud.get(session=session, tweet_id=tweet_id)
+    tweet: Tweet | None = await crud.tweet.tweet_crud.get(
+        session=session, tweet_id=tweet_id
+    )
 
     if tweet:
         like_data: dict[str, str | int] = {

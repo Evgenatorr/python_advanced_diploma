@@ -25,10 +25,14 @@ async def subscription(
     :return: JSONResponse
     """
 
-    user_in_db: User | None = await crud.user.user_crud.get(session=session, user_id=user_id)
+    user_in_db: User | None = await crud.user.user_crud.get(
+        session=session, user_id=user_id
+    )
+
     current_user_in_db: User | None = await crud.user.user_crud.get(
         session=session, user_id=current_user.id
     )
+
     if user_in_db and current_user_in_db:
         current_user_in_db.following.append(user_in_db)
         await session.refresh(current_user_in_db)
