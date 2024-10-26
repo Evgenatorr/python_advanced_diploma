@@ -6,8 +6,7 @@ from src import crud, schemas
 from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
-from logging_conf import logger
-
+from logs_conf.utils import logger
 router: APIRouter = APIRouter(tags=["DELETE"])
 
 

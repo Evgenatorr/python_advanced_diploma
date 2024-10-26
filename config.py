@@ -4,14 +4,17 @@ from fastapi.security import APIKeyHeader
 from pydantic_settings import BaseSettings
 from pydantic import BaseModel
 from pathlib import Path
+from logs_conf.utils import logger
 
 dotenv_path: str = os.path.join(os.path.dirname(__file__), '.env')
 
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
+    logger.info('Переменные окружения загружены')
     print('Переменные окружения загружены')
 
 else:
+    logger.info('Переменные окружения не загружены т.к отсутствует файл .env')
     exit("Переменные окружения не загружены т.к отсутствует файл .env")
 
 

@@ -1,4 +1,3 @@
-import logging
 import contextlib
 from typing import AsyncIterator
 
@@ -10,18 +9,18 @@ from src.routes import (create_tweet, create_user, delete_follow, delete_like,
 
 from .database.session_manager import db_manager
 from src.utils.get_db_url import get_database_url
-from logging_conf import setup_logging, logger
+from logs_conf.utils import logger, setup_logging
+from logs_conf.logging_conf import LOGGING_CONFIG
 
-setup_logging()
-
+setup_logging(LOGGING_CONFIG)
 
 
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     db_manager.init(get_database_url())
-    logger.debug('База инициализирована')
+    logger.info('База инициализирована')
     yield
-    logger.debug('База закрыта')
+    logger.info('База закрыта')
     await db_manager.close()
 
 

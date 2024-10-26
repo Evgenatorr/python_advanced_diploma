@@ -9,7 +9,7 @@ from src import crud
 from src.database.async_session import get_async_session
 from src.database.models.user_model import User
 from src.schemas.user import UserCreate
-from logging_conf import logger
+from logs_conf.utils import logger
 
 router = APIRouter(tags=["POST"])
 
@@ -28,8 +28,8 @@ async def create_user(
     user: User = await crud.user.user_crud.post(
         session=session, user_data=user_data.model_dump()
     )
-    # random_api_key: str = str(uuid.uuid4())
-    random_api_key: str = 'test'
+    random_api_key: str = str(uuid.uuid4())
+    # random_api_key: str = 'test'
     api_data: dict[str, str | int] = {"api_key": random_api_key, "user_id": user.id}
     try:
         await crud.api_key.api_key_crud.post(session=session, api_key_data=api_data)
@@ -43,6 +43,6 @@ async def create_user(
     await session.refresh(user)
     logger.debug(f'Пользователь {user.name} создан, api key - {random_api_key}')
     return JSONResponse(
-        content={"status": "true", "api_key": random_api_key},
+        content={"status": "true", "api_key": random_api_key, "user_id": user.id},
         status_code=status.HTTP_201_CREATED
     )

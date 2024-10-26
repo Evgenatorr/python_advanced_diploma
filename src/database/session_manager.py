@@ -3,7 +3,7 @@ from typing import AsyncIterator, Optional
 
 from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
                                     async_sessionmaker, create_async_engine, AsyncConnection)
-from logging_conf import logger
+from logs_conf.utils import logger
 
 
 class DatabaseSessionManager:
@@ -54,7 +54,7 @@ class DatabaseSessionManager:
                 logger.debug("Session started")
                 yield session
             except Exception as exc:
-                logger.error("Session error", exc_info=exc)
+                logger.error(exc)
                 await session.rollback()
                 raise
             finally:
