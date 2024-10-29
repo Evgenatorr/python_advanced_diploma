@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
                                     async_sessionmaker, create_async_engine,
                                     AsyncConnection)
 
-from logs_conf.utils import logger
+from logs_conf.log_utils import logger
 
 
 class DatabaseSessionManager:

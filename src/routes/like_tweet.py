@@ -6,7 +6,7 @@ from src import crud, schemas
 from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
-from logs_conf.utils import logger
+from logs_conf.log_utils import logger
 
 router: APIRouter = APIRouter(tags=["POST"])
 
@@ -26,7 +26,7 @@ async def like_tweet(
     """
 
     tweet: Tweet | None = await crud.tweet.tweet_crud.get(
-        session=session, tweet_id=tweet_id
+        session=session, id=tweet_id
     )
 
     if tweet:
@@ -36,7 +36,7 @@ async def like_tweet(
             "tweet_id": tweet_id,
         }
 
-        await crud.like.like_crud.post(session=session, like_data=like_data)
+        await crud.like.like_crud.post(session=session, obj_in_data=like_data)
         logger.debug(f'Пользователь с id {current_user.id} '
                      f'успешно поставил лайк на твит с id {tweet_id}')
         return JSONResponse(

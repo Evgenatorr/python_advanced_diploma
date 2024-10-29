@@ -4,7 +4,7 @@ from fastapi.security import APIKeyHeader
 from pydantic_settings import BaseSettings
 from pydantic import BaseModel
 from pathlib import Path
-from logs_conf.utils import logger
+from logs_conf.log_utils import logger
 
 dotenv_path: str = os.path.join(os.path.dirname(__file__), '.env')
 

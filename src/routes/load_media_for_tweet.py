@@ -8,7 +8,7 @@ from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.media_model import Media
 from src.utils.create_unic_out_path import out_path
-from logs_conf.utils import logger
+from logs_conf.log_utils import logger
 
 router = APIRouter(tags=["POST"])
 

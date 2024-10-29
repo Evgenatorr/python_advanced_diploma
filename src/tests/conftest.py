@@ -12,7 +12,7 @@ from src.loader import app
 from src.database.session_manager import db_manager
 from src.database import models
 from logs_conf.logging_test_conf import TEST_LOGGING_CONFIG
-from logs_conf.utils import logger, setup_logging
+from logs_conf.log_utils import logger, setup_logging
 
 
 @pytest.fixture(scope='session', autouse=True)

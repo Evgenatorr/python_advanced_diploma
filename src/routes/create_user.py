@@ -9,7 +9,7 @@ from src import crud
 from src.database.async_session import get_async_session
 from src.database.models.user_model import User
 from src.schemas.user import UserCreate
-from logs_conf.utils import logger
+from logs_conf.log_utils import logger
 
 router = APIRouter(tags=["POST"])
 
@@ -26,13 +26,13 @@ async def create_user(
     :return: JSONResponse
     """
     user: User = await crud.user.user_crud.post(
-        session=session, user_data=user_data.model_dump()
+        session=session, obj_in_data=user_data.model_dump()
     )
     random_api_key: str = str(uuid.uuid4())
     # random_api_key: str = 'test'
     api_data: dict[str, str | int] = {"api_key": random_api_key, "user_id": user.id}
     try:
-        await crud.api_key.api_key_crud.post(session=session, api_key_data=api_data)
+        await crud.api_key.api_key_crud.post(session=session, obj_in_data=api_data)
     except IntegrityError as exc:
         logger.error('Такой api key уже существует', exc_info=exc)
         await session.rollback()

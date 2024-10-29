@@ -4,12 +4,12 @@ from typing import AsyncIterator
 from fastapi import FastAPI
 
 from src.routes import (create_tweet, create_user, delete_follow, delete_like,
-                        delete_tweet, follow, get_tweet, get_user,
+                        delete_tweet, follow, get_tweets, get_user,
                         get_user_by_id, like_tweet, load_media_for_tweet)
 
 from .database.session_manager import db_manager
 from src.utils.get_db_url import get_database_url
-from logs_conf.utils import logger, setup_logging
+from logs_conf.log_utils import logger, setup_logging
 from logs_conf.logging_conf import LOGGING_CONFIG
 
 setup_logging(LOGGING_CONFIG)
@@ -29,7 +29,7 @@ app.include_router(create_user.router)
 app.include_router(create_tweet.router)
 app.include_router(get_user.router)
 app.include_router(get_user_by_id.router)
-app.include_router(get_tweet.router)
+app.include_router(get_tweets.router)
 app.include_router(like_tweet.router)
 app.include_router(delete_like.router)
 app.include_router(load_media_for_tweet.router)

@@ -6,7 +6,7 @@ from src import crud, schemas
 from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
-from logs_conf.utils import logger
+from logs_conf.log_utils import logger
 router: APIRouter = APIRouter(tags=["DELETE"])
 
 
@@ -25,11 +25,11 @@ async def delete_tweet(
     """
 
     tweet: Tweet | None = await crud.tweet.tweet_crud.get(
-        session=session, tweet_id=tweet_id
+        session=session, id=tweet_id
     )
 
     if tweet and tweet.author_id == current_user.id:
-        await crud.tweet.tweet_crud.delete(session=session, tweet_id=tweet_id)
+        await crud.tweet.tweet_crud.delete(session=session, id=tweet_id)
         logger.debug(
             f'Пользователь с id {current_user.id} успешно удалил твит с id {tweet_id}'
         )

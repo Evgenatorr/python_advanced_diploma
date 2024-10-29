@@ -6,7 +6,7 @@ from src import crud, schemas
 from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.like_model import Like
-from logs_conf.utils import logger
+from logs_conf.log_utils import logger
 
 router: APIRouter = APIRouter(tags=["DELETE"])
 
@@ -32,7 +32,7 @@ async def delete_like(
     )
 
     if like:
-        await crud.like.like_crud.delete(session=session, like_id=like.id)
+        await crud.like.like_crud.delete(session=session, id=like.id)
         logger.debug(f'Пользователь с id {current_user.id} '
                      f'успешно убрал лайк с твита с id {tweet_id}')
         return JSONResponse(
