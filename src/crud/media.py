@@ -9,7 +9,7 @@ class MediaCrud(BaseCrud[Media]):
         """
         Функция добавления записи в таблицу media
         """
-        media = self.model(file_link=media_path)
+        media: Media = self.model(file_link=media_path)
         session.add(media)
         await session.commit()
         await session.refresh(media)

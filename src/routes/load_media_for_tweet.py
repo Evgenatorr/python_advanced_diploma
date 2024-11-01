@@ -1,3 +1,5 @@
+from typing import Literal
+
 import aiofiles
 from fastapi import APIRouter, Depends, File, UploadFile, status
 from fastapi.responses import JSONResponse
@@ -15,18 +17,20 @@ router = APIRouter(tags=["POST"])
 
 async def load_media(
     file: UploadFile = File(...),
-) -> str:
+) -> str | bool:
     """
     Функция загрузки изображения от пользователя на сервер
     :param file: изображение от пользователя
     :return: str
     """
 
-    unic_out_path: str = out_path(filename=file.filename)
-    async with aiofiles.open(unic_out_path, "wb") as out_file:
-        content: bytes = await file.read()
-        await out_file.write(content)
-    logger.debug('Изображение успешно загружено')
+    unic_out_path: str | bool = out_path(filename=file.filename)
+    if unic_out_path:
+        async with aiofiles.open(unic_out_path, "wb") as out_file:
+            content: bytes = await file.read()
+            await out_file.write(content)
+        logger.debug('Изображение успешно загружено')
+
     return unic_out_path
 
 
@@ -43,17 +47,24 @@ async def add_media(
     :param current_user: пользователь прошедший аутентификацию
     :return: JSONResponse
     """
+    if path:
+        file_name: str = path.split("/")[-1]
+        path_nginx_image: str = f"/images/{file_name}"
+        media: Media = await crud.media.media_crud.post(
+            session=session, media_path=path_nginx_image
+        )
+        logger.debug('Изображение успешно добавлено в базу данных')
+        return JSONResponse(
+            content={
+                "result": "true",
+                "media_id": media.id,
+            },
+            status_code=status.HTTP_201_CREATED,
+        )
 
-    file_name: str = path.split("/")[-1]
-    path_nginx_image: str = f"/images/{file_name}"
-    media: Media = await crud.media.media_crud.post(
-        session=session, media_path=path_nginx_image
-    )
-    logger.debug('Изображение успешно добавлено в базу данных')
     return JSONResponse(
         content={
-            "result": "true",
-            "media_id": media.id,
+            "result": "false",
         },
-        status_code=status.HTTP_201_CREATED,
+        status_code=status.HTTP_404_NOT_FOUND,
     )

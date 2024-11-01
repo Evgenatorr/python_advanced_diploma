@@ -39,11 +39,11 @@ class BaseCrud(Generic[ModelType]):
         Обновление существующего объекта
         """
         obj_data = jsonable_encoder(db_obj)
-        for field in obj_data:
-            if field in obj_in_data:
-                setattr(
-                    db_obj, field, obj_in_data[field]
-                )  # current_user_data.field = update_data[field]
+        updated_fields = {field: obj_in_data[field] for field in obj_data if field in obj_in_data}
+
+        for field, value in updated_fields.items():
+            setattr(db_obj, field, value)
+
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)
