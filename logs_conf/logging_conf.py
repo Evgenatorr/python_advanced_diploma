@@ -1,3 +1,5 @@
+from config import settings
+
 LOGGING_CONFIG = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -18,7 +20,7 @@ LOGGING_CONFIG = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'app.log',
+            'filename': settings.LOG_FILE,
             'formatter': 'verbose',
         },
     },

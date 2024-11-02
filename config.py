@@ -51,6 +51,8 @@ class Settings(BaseSettings):
     """
     Base settings for program.
     """
+    LOG_FILE: str = os.getenv('LOG_FILE')
+    TEST_LOG_FILE: str = os.getenv('TEST_LOG_FILE')
     API_KEY_HEADER: APIKeyHeader = APIKeyHeader(name="api-key")
     APP_BASE_HOST: str = 'fastapi'
     APP_BASE_PORT: int = 8000

@@ -1,3 +1,5 @@
+from config import settings
+
 TEST_LOGGING_CONFIG = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -10,7 +12,7 @@ TEST_LOGGING_CONFIG = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'test.log',
+            'filename': settings.TEST_LOG_FILE,
             'formatter': 'standard',
             'mode': 'w',
         },

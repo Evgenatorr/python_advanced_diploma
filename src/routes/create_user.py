@@ -31,8 +31,10 @@ async def create_user(
     random_api_key: str = str(uuid.uuid4())
     # random_api_key: str = 'test'
     api_data: dict[str, str | int] = {"api_key": random_api_key, "user_id": user.id}
+
     try:
         await crud.api_key.api_key_crud.post(session=session, obj_in_data=api_data)
+
     except IntegrityError as exc:
         logger.error('Такой api key уже существует', exc_info=exc)
         await session.rollback()
