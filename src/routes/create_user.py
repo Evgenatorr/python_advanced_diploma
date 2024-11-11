@@ -12,7 +12,9 @@ from src.database.models.user_model import User
 from src.schemas.user import UserCreate
 from config import settings
 from logs_conf.log_utils import logger
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
+security = HTTPBasic()
 router = APIRouter(tags=["POST"])
 templates = Jinja2Templates(directory=os.path.join(settings.static.STATIC_PATH, 'admin'))
 
@@ -23,6 +25,7 @@ async def create_user(
         name: str = Form(pattern=r'[a-zA-Zа-яА-Я]'),
         api_key: str = Form(...),
         session: AsyncSession = Depends(get_async_session),
+        # credentials: HTTPBasicCredentials = Depends(security)
 ) -> JSONResponse | RedirectResponse:
     """
     Роутер для создания нового пользователя
@@ -31,7 +34,6 @@ async def create_user(
     :param session: асинхронная сессия базы данных
     :return: JSONResponse
     """
-
     user_data = UserCreate(
         name=name,
         api_key=api_key,

@@ -56,6 +56,7 @@ services:
       - fastapi
     volumes:
       - ./web/nginx.conf:/etc/nginx/nginx.conf
+      - ./web/static/admin/htpasswd:/etc/nginx/htpasswd
       - ./web/static:/code/web/static
     networks:
       - backend
