@@ -25,4 +25,4 @@
 
       docker exec -it fastapi alembic upgrade head
 
-* Создать пользователя в свагере через роут /api/users
+* Создать пользователя можно по адресу http://0.0.0.0:8080/admin/
