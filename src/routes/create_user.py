@@ -20,7 +20,7 @@ templates = Jinja2Templates(directory=os.path.join(settings.static.STATIC_PATH, 
 @router.post("/api/create_user", description='Роутер для создания нового пользователя',
              response_model=None)
 async def create_user(
-        name: str = Form(pattern=r'[a-zA-Z]'),
+        name: str = Form(pattern=r'[a-zA-Zа-яА-Я]'),
         api_key: str = Form(...),
         session: AsyncSession = Depends(get_async_session),
 ) -> JSONResponse | RedirectResponse:
