@@ -26,13 +26,17 @@ async def get_user_by_secure_key(
         """
         return {"id": entity.id, "name": entity.name}
 
-    api_key_db: models.api_key_model.ApiKey | None = (
-        await crud.api_key.api_key_crud.get_by_apikey(session=session, api_key=api_key)
+    # api_key_db: models.api_key_model.ApiKey | None = (
+    #     await crud.api_key.api_key_crud.get_by_apikey(session=session, api_key=api_key)
+    # )
+    # if api_key_db:
+    # user: models.user_model.User = await crud.user.user_crud.get(
+    #     session=session, user_id=api_key_db.user_id
+    # )
+    user: models.user_model.User = await crud.user.user_crud.get_by_api_key(
+        session=session, api_key=api_key
     )
-    if api_key_db:
-        user: models.user_model.User = await crud.user.user_crud.get(
-            session=session, user_id=api_key_db.user_id
-        )
+    if user:
         followers = [
             entity_to_dict(follower)
             for follower in user.followers

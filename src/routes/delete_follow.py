@@ -25,11 +25,11 @@ async def subscription(
     :return: JSONResponse
     """
 
-    user_in_db: User | None = await crud.user.user_crud.get(
+    user_in_db: User | None = await crud.user.user_crud.get_with_lazy_load(
         session=session, user_id=user_id
     )
 
-    current_user_in_db: User | None = await crud.user.user_crud.get(
+    current_user_in_db: User | None = await crud.user.user_crud.get_with_lazy_load(
         session=session, user_id=current_user.id
     )
 

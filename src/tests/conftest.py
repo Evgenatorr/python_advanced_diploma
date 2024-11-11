@@ -7,7 +7,7 @@ from asgi_lifespan import LifespanManager
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession
 
-os.environ["START"] = "test"
+os.environ["MODE"] = "test"
 from src.loader import app
 from src.database.session_manager import db_manager
 from src.database import models
@@ -56,14 +56,9 @@ async def init_db(db_session: AsyncSession):
 
         user = models.user_model.User(
             name='test_name',
+            api_key='test'
         )
         db_session.add(user)
-        await db_session.flush()
-        api_key = models.api_key_model.ApiKey(
-            api_key='test',
-            user_id=user.id,
-        )
-        db_session.add(api_key)
         await db_session.commit()
 
         yield

@@ -25,11 +25,11 @@ async def subscription(
     :return: JSONResponse
     """
 
-    user_in_db: User | None = await crud.user.user_crud.get(
+    user_in_db: User | None = await crud.user.user_crud.get_with_lazy_load(
         session=session, user_id=user_id
     )
 
-    current_user_in_db: User | None = await crud.user.user_crud.get(
+    current_user_in_db: User | None = await crud.user.user_crud.get_with_lazy_load(
         session=session, user_id=current_user.id
     )
 
@@ -46,8 +46,7 @@ async def subscription(
             status_code=status.HTTP_201_CREATED,
         )
 
-    logger.debug(f'Пользователь с id {current_user_in_db.id} '
-                 f'или пользователь с id {user_in_db.id} не найден')
+    logger.debug(f'Пользователь не найден')
     return JSONResponse(
         content={
             "result": "false",

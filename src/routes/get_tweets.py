@@ -28,7 +28,7 @@ async def get_tweets(
     :return: JSONResponse
     """
 
-    user_in_db: models.user_model.User | None = await crud.user.user_crud.get(
+    user_in_db: models.user_model.User | None = await crud.user.user_crud.get_with_lazy_load(
         session=session, user_id=current_user.id
     )
     if user_in_db is None:
@@ -51,7 +51,6 @@ async def get_tweets(
     if not tweets_with_likes:
         return JSONResponse(
             content={"result": "false"},
-            status_code=status.HTTP_404_NOT_FOUND,
         )
 
     # Преобразуем результат в список для ответа

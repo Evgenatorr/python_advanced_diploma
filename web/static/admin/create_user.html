@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание пользователя</title>
+</head>
+<body>
+    <form action="/api/create_user" method="post">
+        <label for="name">Введите имя:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="api_key">Введите Api Key:</label>
+        <input type="text" id="api_key" name="api_key" required>
+        <button type="submit">Отправить</button>
+    </form>
+</body>
+</html>

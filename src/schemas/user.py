@@ -11,7 +11,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    ...
+    api_key: str
 
 
 class Follower(UserBase):

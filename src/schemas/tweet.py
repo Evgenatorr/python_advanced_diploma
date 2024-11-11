@@ -34,10 +34,6 @@ class TweetCreateResponse(TweetCreateRequest):
     model_config = ConfigDict(from_attributes=True)
 
 
-class TweetUpdateRequest(TweetBase):
-    ...
-
-
 class TweetResponse(TweetBase):
     id: int
     likes: Optional[list[LikeTweet]]

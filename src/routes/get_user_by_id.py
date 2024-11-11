@@ -21,7 +21,7 @@ async def check_user(
     :return: UserResponse | None
     """
 
-    user: User | None = await user_crud.get(session=session, user_id=user_id)
+    user: User | None = await user_crud.get_with_lazy_load(session=session, user_id=user_id)
 
     if not user:
         raise HTTPException(

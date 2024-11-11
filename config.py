@@ -19,7 +19,6 @@ else:
 
 
 class StaticConfig(BaseModel):
-    TEMPLATES_PATH: str = os.path.join(Path(__file__).parent, 'src', 'templates')
     STATIC_PATH: str = os.path.join(Path(__file__).parent, 'web', 'static')
     IMAGES_PATH: str = os.path.join(Path(__file__).parent, 'web', 'static', 'images')
 

@@ -19,8 +19,8 @@ class User(MyBase):
     name: Mapped[str] = mapped_column(VARCHAR(50), nullable=False)
 
     tweets = relationship(argument="Tweet", back_populates="author", lazy="selectin")
-    api_key = relationship(argument="ApiKey", back_populates="user", lazy="selectin")
-
+    # api_key = relationship(argument="ApiKey", back_populates="user", lazy="selectin")
+    api_key: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)
     followers = relationship(
         "User",
         secondary=followers,
