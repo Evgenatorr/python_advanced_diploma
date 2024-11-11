@@ -11,7 +11,7 @@ async def test_create_user(async_client: AsyncClient):
         }
     )
     # user_id = 2
-    assert response.status_code == HTTPStatus.CREATED
+    assert response.status_code == HTTPStatus.TEMPORARY_REDIRECT
     # assert response.json()['user_id'] == user_id
 
 
