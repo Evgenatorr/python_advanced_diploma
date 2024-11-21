@@ -8,6 +8,6 @@ from src.database.models.base_model import MyBase
 class Media(MyBase):
     # filename: Mapped[VARCHAR] = mapped_column(VARCHAR, nullable=False)
     tweet_id: Mapped[int] = mapped_column(
-        INTEGER, ForeignKey("tweet.id", ondelete="CASCADE"), nullable=True
+        INTEGER, ForeignKey("tweets.id", ondelete="CASCADE"), nullable=True
     )
     file_link: Mapped[str] = mapped_column(VARCHAR, nullable=False)

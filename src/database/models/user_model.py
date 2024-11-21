@@ -10,8 +10,8 @@ from src.database.models.base_model import MyBase
 followers = Table(
     "followers",
     MyBase.metadata,
-    Column("follower_id", INTEGER, ForeignKey("user.id")),
-    Column("followed_id", INTEGER, ForeignKey("user.id"))
+    Column("follower_id", INTEGER, ForeignKey("users.id")),
+    Column("followed_id", INTEGER, ForeignKey("users.id"))
 )
 
 
@@ -19,7 +19,6 @@ class User(MyBase):
     name: Mapped[str] = mapped_column(VARCHAR(50), nullable=False)
 
     tweets = relationship(argument="Tweet", back_populates="author", lazy="selectin")
-    # api_key = relationship(argument="ApiKey", back_populates="user", lazy="selectin")
     api_key: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)
     followers = relationship(
         "User",

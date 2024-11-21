@@ -20,7 +20,7 @@ class MyBase(DeclarativeBase):
     @declared_attr
     def __tablename__(cls):
         # The table name is derived from the class name in lowercase
-        return cls.__name__.lower()
+        return f'{cls.__name__.lower()}s'
 
     metadata = MetaData(naming_convention=convention)  # type: ignore
 

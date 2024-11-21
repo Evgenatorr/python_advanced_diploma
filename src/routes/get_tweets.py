@@ -40,7 +40,7 @@ async def get_tweets(
             status_code=status.HTTP_404_NOT_FOUND,
         )
 
-    # Получаем список пользователей, на которых подписан текущий пользователь
+    # Получаем список с id пользователей, на которых подписан текущий пользователь
     following_ids: list = [f.id for f in user_in_db.following]
     # Включаем твиты пользователя и тех, на кого он подписан
     all_user_ids: list[int] = [current_user.id] + following_ids

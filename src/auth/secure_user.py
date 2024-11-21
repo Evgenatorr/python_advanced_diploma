@@ -7,6 +7,7 @@ from src.database import models
 from src.database.async_session import get_async_session
 from src.schemas.user import UserResponse
 from logs_conf.log_utils import logger
+from src.utils.followers_to_dict import entity_to_dict
 
 
 async def get_user_by_secure_key(
@@ -19,12 +20,6 @@ async def get_user_by_secure_key(
     :param session: асинхронная сессия базы данных
     :return: UserResponse | HTTPException
     """
-
-    def entity_to_dict(entity):
-        """
-        Локальная функция для преобразования данных из базы в нужны словарь
-        """
-        return {"id": entity.id, "name": entity.name}
 
     user: models.user_model.User | None = await crud.user.user_crud.get_by_api_key(
         session=session, api_key=api_key

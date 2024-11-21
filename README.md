@@ -23,7 +23,7 @@
 
 * После запуска накатываем миграцию для создания таблиц:
 
-      docker exec -it fastapi alembic upgrade head
+      docker exec -it fastapi_tweeter_clone alembic upgrade head
 
 * Создать пользователя можно по адресу http://0.0.0.0:8080/admin/ (логин и пароль по умолчанию admin admin)
 * Изменить логин и пароль можно в файле: htpasswd [/web/static/admin/htpasswd](./web/static/admin/htpasswd)

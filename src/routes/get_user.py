@@ -20,7 +20,6 @@ async def user_info(
     :param current_user: пользователь прошедший аутентификацию
     :return: JSONResponse
     """
-
     return JSONResponse(
         content={
             "result": "true",
