@@ -1,4 +1,4 @@
-from typing import Type, TypeVar, Generic, Sequence, Optional
+from typing import Type, TypeVar, Generic, Sequence, Optional, Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -24,7 +24,9 @@ class BaseCrud(Generic[ModelType]):
         query = await session.execute(select(self.model))
         return query.scalars().all()
 
-    async def post(self, session: AsyncSession, obj_in_data: dict) -> ModelType:
+    async def post(
+            self, session: AsyncSession, obj_in_data: dict[Any, Any]
+    ) -> ModelType:
         """
         Создание нового объекта
         """
@@ -34,12 +36,17 @@ class BaseCrud(Generic[ModelType]):
         await session.refresh(obj_in)
         return obj_in
 
-    async def update(self, session: AsyncSession, db_obj: ModelType, obj_in_data: dict) -> ModelType:
+    async def update(
+            self, session: AsyncSession, db_obj: ModelType, obj_in_data: dict
+    ) -> ModelType:
         """
         Обновление существующего объекта
         """
         obj_data = jsonable_encoder(db_obj)
-        updated_fields = {field: obj_in_data[field] for field in obj_data if field in obj_in_data}
+        updated_fields = {
+            field: obj_in_data[field]
+            for field in obj_data if field in obj_in_data
+        }
 
         for field, value in updated_fields.items():
             setattr(db_obj, field, value)

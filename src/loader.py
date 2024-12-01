@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from src.routes import (create_tweet, create_user, delete_follow, delete_like,
                         delete_tweet, follow, get_tweets, get_user,
-                        get_user_by_id, like_tweet, load_media_for_tweet, get_all_users)
+                        get_user_by_id, like_tweet, create_media, get_all_users)
 
 from .database.session_manager import db_manager
 from src.utils.get_db_url import get_database_url
@@ -32,7 +32,7 @@ app.include_router(get_user_by_id.router)
 app.include_router(get_tweets.router)
 app.include_router(like_tweet.router)
 app.include_router(delete_like.router)
-app.include_router(load_media_for_tweet.router)
+app.include_router(create_media.router)
 app.include_router(delete_tweet.router)
 app.include_router(follow.router)
 app.include_router(delete_follow.router)

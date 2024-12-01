@@ -7,12 +7,12 @@ from asgi_lifespan import LifespanManager
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession
 
-os.environ["MODE"] = "test"
 from src.loader import app
 from src.database.session_manager import db_manager
-from src.database import models
+from src.database.models import user_model, base_model
 from logs_conf.logging_test_conf import TEST_LOGGING_CONFIG
 from logs_conf.log_utils import logger, setup_logging
+os.environ["MODE"] = "test"
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -51,10 +51,10 @@ async def init_db(db_session: AsyncSession):
     """
     async with LifespanManager(app):
         async with db_manager.connect() as connection:
-            await connection.run_sync(models.base_model.MyBase.metadata.drop_all)
-            await connection.run_sync(models.base_model.MyBase.metadata.create_all)
+            await connection.run_sync(base_model.MyBase.metadata.drop_all)
+            await connection.run_sync(base_model.MyBase.metadata.create_all)
 
-        user = models.user_model.User(
+        user = user_model.User(
             name='test_name',
             api_key='test'
         )
@@ -63,7 +63,7 @@ async def init_db(db_session: AsyncSession):
 
         yield
         async with db_manager.connect() as connection:
-            await connection.run_sync(models.base_model.MyBase.metadata.drop_all)
+            await connection.run_sync(base_model.MyBase.metadata.drop_all)
 
 
 @pytest.fixture(scope="function")

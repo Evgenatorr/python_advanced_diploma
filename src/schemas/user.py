@@ -2,8 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.schemas.base_api_schema import APIBaseSuccessfulSchema
-from src.schemas.tweet import TweetResponse
+from .base_api_schema import APIBaseSuccessfulSchema
+from .tweet import TweetResponse
 
 
 class UserBase(BaseModel):

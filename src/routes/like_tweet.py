@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import crud, schemas
+from src.crud import tweet_crud, like_crud
+from src.schemas import UserResponse
 from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
@@ -13,9 +14,9 @@ router: APIRouter = APIRouter(tags=["POST"])
 
 @router.post("/api/tweets/{tweet_id}/likes", status_code=status.HTTP_201_CREATED)
 async def like_tweet(
-    tweet_id: int,
-    session: AsyncSession = Depends(get_async_session),
-    current_user: schemas.user.UserResponse = Depends(get_user_by_secure_key),
+        tweet_id: int,
+        session: AsyncSession = Depends(get_async_session),
+        current_user: UserResponse = Depends(get_user_by_secure_key),
 ) -> JSONResponse:
     """
     Роутер для добавления нового лайка от пользователя в базу данных
@@ -25,7 +26,9 @@ async def like_tweet(
     :return: JSONResponse
     """
 
-    tweet: Tweet | None = await crud.tweet.tweet_crud.get(
+    logger.debug('Пользователь с id %s '
+                 'ставит лайк', current_user.id)
+    tweet: Tweet | None = await tweet_crud.get(
         session=session, id=tweet_id
     )
 
@@ -36,9 +39,9 @@ async def like_tweet(
             "tweet_id": tweet_id,
         }
 
-        await crud.like.like_crud.post(session=session, obj_in_data=like_data)
-        logger.debug(f'Пользователь с id {current_user.id} '
-                     f'успешно поставил лайк на твит с id {tweet_id}')
+        await like_crud.post(session=session, obj_in_data=like_data)
+        logger.info('Пользователь с id %s '
+                    'успешно поставил лайк на твит с id %s', current_user.id, tweet_id)
         return JSONResponse(
             content={
                 "result": "true",

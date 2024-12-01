@@ -5,9 +5,11 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
-from src import crud
+from src.crud import user_crud
 from src.database.async_session import get_async_session
 from config import settings
+from logs_conf.log_utils import logger
+
 
 router = APIRouter(tags=["POST"])
 templates = Jinja2Templates(directory=os.path.join(settings.static.STATIC_PATH, 'admin'))
@@ -24,7 +26,10 @@ async def get_list_users(
     :param session: асинхронная сессия базы данных
     :return: JSONResponse
     """
-    users = await crud.user.user_crud.get_list(session=session)
+    logger.debug(
+        'Выводим таблицу с пользователями'
+    )
+    users = await user_crud.get_list(session=session)
     count_users = len(users)
     return templates.TemplateResponse(
         'get_all_users.html', {

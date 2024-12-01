@@ -18,7 +18,10 @@ class UserCrud(BaseCrud[User]):
         query = await session.execute(
             select(self.model)
             .where(self.model.api_key == api_key)
-            .options(selectinload(self.model.followers), selectinload(self.model.following))
+            .options(
+                selectinload(self.model.followers),
+                selectinload(self.model.following)
+            )
         )
         return query.scalar()
 
@@ -31,7 +34,10 @@ class UserCrud(BaseCrud[User]):
         query = await session.execute(
             select(self.model)
             .where(self.model.id == user_id)
-            .options(selectinload(self.model.followers), selectinload(self.model.following))
+            .options(
+                selectinload(self.model.followers),
+                selectinload(self.model.following)
+            )
         )
         return query.scalar()
 

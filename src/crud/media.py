@@ -1,19 +1,28 @@
+from typing import Sequence, List
+
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from src.database.models.media_model import Media
 from src.crud.base_crud import BaseCrud
 
 
 class MediaCrud(BaseCrud[Media]):
-    async def post(self, session: AsyncSession, media_path: str) -> Media:
+    async def get_list_by_media_ids(
+            self, session: AsyncSession, media_ids: List[int] | None
+    ) -> Sequence[Media] | None:
         """
-        Функция добавления записи в таблицу media
+        Функция получения списка медиа по id
         """
-        media: Media = self.model(file_link=media_path)
-        session.add(media)
-        await session.commit()
-        await session.refresh(media)
-        return media
+        if media_ids is None:
+            return None
+        stmt = (
+            select(self.model)
+            .filter(self.model.id.in_(media_ids))
+        )
+
+        result = await session.execute(stmt)
+        return result.scalars().all()
 
 
 media_crud = MediaCrud(Media)

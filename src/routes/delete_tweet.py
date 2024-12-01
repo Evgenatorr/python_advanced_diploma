@@ -1,15 +1,17 @@
-import os
+from typing import cast, List
 
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import crud, schemas
+from src.crud import tweet_crud
+from src.schemas import UserResponse
 from src.auth.secure_user import get_user_by_secure_key
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
+from src.utils.remove_images import del_images
 from logs_conf.log_utils import logger
-from config import settings
+
 
 router: APIRouter = APIRouter(tags=["DELETE"])
 
@@ -18,7 +20,7 @@ router: APIRouter = APIRouter(tags=["DELETE"])
 async def delete_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(get_async_session),
-    current_user: schemas.user.UserResponse = Depends(get_user_by_secure_key),
+    current_user: UserResponse = Depends(get_user_by_secure_key),
 ) -> JSONResponse:
     """
     Роутер удаления твита из базы данных
@@ -27,18 +29,23 @@ async def delete_tweet(
     :param current_user: пользователь прошедший аутентификацию
     :return: JSONResponse
     """
-
-    tweet: Tweet | None = await crud.tweet.tweet_crud.get(
+    logger.debug(
+        'Пользователь с id %s удаляет твит',
+        current_user.id
+    )
+    tweet: Tweet | None = await tweet_crud.get(
         session=session, id=tweet_id
     )
 
     if tweet and tweet.author_id == current_user.id:
-        await crud.tweet.tweet_crud.delete(session=session, id=tweet_id)
-        logger.debug(
-            f'Пользователь с id {current_user.id} успешно удалил твит с id {tweet_id}'
+        await tweet_crud.delete(session=session, id=tweet_id)
+        logger.info(
+            'Пользователь с id %s успешно удалил твит с id %s',
+            current_user.id, tweet_id
         )
-        if tweet.media:
-            os.remove(settings.static.STATIC_PATH + tweet.media[0].file_link)
+        if tweet.attachments:
+            attachments = cast(List[str], tweet.attachments)
+            await del_images(medias=attachments)
 
         return JSONResponse(
             content={

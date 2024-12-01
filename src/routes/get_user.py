@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 from src.auth.secure_user import get_user_by_secure_key
-from src.schemas.user import APIUserResponseSuccessful, UserResponse
+from src.schemas import APIUserResponseSuccessful, UserResponse
+
 
 router = APIRouter(tags=["GET"])
 
@@ -20,6 +21,7 @@ async def user_info(
     :param current_user: пользователь прошедший аутентификацию
     :return: JSONResponse
     """
+
     return JSONResponse(
         content={
             "result": "true",

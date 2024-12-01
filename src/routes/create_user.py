@@ -3,10 +3,10 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import crud
+from src.crud import user_crud
 from src.database.async_session import get_async_session
 from src.database.models.user_model import User
-from src.schemas.user import UserCreate
+from src.schemas import UserCreate
 from logs_conf.log_utils import logger
 
 
@@ -27,12 +27,14 @@ async def create_user(
     :param session: асинхронная сессия базы данных
     :return: JSONResponse
     """
+
+    logger.info('Создаём пользователя с api_key: %s', api_key)
     user_data = UserCreate(
         name=name,
         api_key=api_key,
     )
     try:
-        user: User = await crud.user.user_crud.post(
+        user: User = await user_crud.post(
             session=session, obj_in_data=user_data.model_dump()
         )
 
@@ -46,7 +48,7 @@ async def create_user(
             },
             status_code=status.HTTP_409_CONFLICT
         )
-    logger.debug(f'Пользователь {user.name} создан, api key - {user.api_key}')
+    logger.info('Пользователь %s создан, api key - %s', user.name, user.api_key)
 
     return JSONResponse(
         content={
@@ -55,4 +57,3 @@ async def create_user(
         },
         status_code=status.HTTP_201_CREATED
     )
-

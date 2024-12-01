@@ -33,27 +33,9 @@ class TweetCrud(BaseCrud[Tweet]):
             .group_by(self.model.id)
             .order_by(desc(func.count(Like.id)))
         )
+
         result = await session.execute(stmt)
         return result.scalars().all()
-
-    async def post_with_author_id(self, session: AsyncSession, tweet_data, author_id: int) -> Tweet:
-        """
-        Функция создания новой записи в таблице tweet
-        :param session: асинхронная сессия базы данных
-        :param tweet_data: данные для добавления записи в таблицу
-        :param author_id: id автора твита
-        :return: Tweet
-        """
-
-        tweet: Tweet = self.model(**tweet_data)
-        setattr(
-            tweet, 'author_id', author_id
-        )
-
-        session.add(tweet)
-        await session.commit()
-        await session.refresh(tweet)
-        return tweet
 
 
 tweet_crud = TweetCrud(Tweet)

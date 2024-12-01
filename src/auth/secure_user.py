@@ -2,18 +2,17 @@ from fastapi import Depends, HTTPException, Security, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
-from src import crud
+from src.crud import user_crud
 from src.database import models
 from src.database.async_session import get_async_session
-from src.schemas.user import UserResponse
+from src.schemas import UserResponse
 from logs_conf.log_utils import logger
-from src.utils.followers_to_dict import entity_to_dict
 
 
 async def get_user_by_secure_key(
         api_key: str = Security(settings.API_KEY_HEADER),
         session: AsyncSession = Depends(get_async_session),
-):
+) -> UserResponse:
     """
     Функция проверяет api_key_header от пользователя
     :param api_key: ключ аутентификации пользователя
@@ -21,28 +20,15 @@ async def get_user_by_secure_key(
     :return: UserResponse | HTTPException
     """
 
-    user: models.user_model.User | None = await crud.user.user_crud.get_by_api_key(
+    logger.debug('Авторизация пользователя с api_key: %s', api_key)
+    user: models.user_model.User | None = await user_crud.get_by_api_key(
         session=session, api_key=api_key
     )
     if user:
-        followers = [
-            entity_to_dict(follower)
-            for follower in user.followers
-        ]
-        following = [
-            entity_to_dict(following)
-            for following in user.following
-        ]
+        user_response = UserResponse.model_validate(user)
+        logger.info('Пользователь(api_key: %s) с id %s '
+                    'успешно прошел авторизацию', api_key, user_response.id)
 
-        user_response: UserResponse = UserResponse(
-            id=user.id,
-            name=user.name,
-            followers=followers,
-            following=following,
-            tweets=user.tweets,
-        )
-        logger.debug(f'Пользователь с id {user_response.id} '
-                     f'успешно прошел аутентификацию')
         return user_response
 
     raise HTTPException(

@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict
 
-from src.schemas.base_api_schema import APIBaseSuccessfulSchema
+from .base_api_schema import APIBaseSuccessfulSchema
 
 
 class Author(BaseModel):
@@ -18,6 +18,10 @@ class LikeTweet(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class CreateMedia(BaseModel):
+    file_link: str
+
+
 class TweetBase(BaseModel):
     content: str
     attachments: Optional[List[str]]
@@ -28,10 +32,8 @@ class TweetCreateRequest(BaseModel):
     tweet_media_ids: Optional[List[int]] = []
 
 
-class TweetCreateResponse(TweetCreateRequest):
-    id: int
-    likes: Optional[List]
-    model_config = ConfigDict(from_attributes=True)
+class TweetCreate(TweetBase):
+    author_id: int
 
 
 class TweetResponse(TweetBase):
@@ -39,10 +41,6 @@ class TweetResponse(TweetBase):
     likes: Optional[list[LikeTweet]]
     author: Author
     model_config = ConfigDict(from_attributes=True)
-
-
-class APITweetResponseSuccessful(APIBaseSuccessfulSchema):
-    tweet: TweetResponse
 
 
 class APITweetListResponseSuccessful(APIBaseSuccessfulSchema):

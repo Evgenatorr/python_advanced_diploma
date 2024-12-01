@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 from src.routes.dependencies.search_user_by_id import check_user
-from src.schemas.user import APIUserResponseSuccessful, UserResponse
+from src.schemas import APIUserResponseSuccessful, UserResponse
+from logs_conf.log_utils import logger
+
 
 router = APIRouter(tags=["GET"])
 
@@ -21,7 +23,7 @@ async def user_info(
     :param user: пользователь
     :return: JSONResponse
     """
-
+    logger.info('Пользователь с id %s найден', user.id)
     return JSONResponse(
         content={
             "result": "true",

@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.dialects.postgresql import INTEGER, VARCHAR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -7,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.database.models.base_model import MyBase
 
 
-followers = Table(
+follow = Table(
     "followers",
     MyBase.metadata,
     Column("follower_id", INTEGER, ForeignKey("users.id")),
@@ -16,15 +14,21 @@ followers = Table(
 
 
 class User(MyBase):
-    name: Mapped[str] = mapped_column(VARCHAR(50), nullable=False)
+    name: Mapped[str] = mapped_column(VARCHAR(30), nullable=False)
+    api_key: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)
 
     tweets = relationship(argument="Tweet", back_populates="author", lazy="selectin")
-    api_key: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)
     followers = relationship(
         "User",
-        secondary=followers,
+        secondary=follow,
+        primaryjoin="User.id == followers.c.follower_id",
+        secondaryjoin="User.id == followers.c.followed_id",
+        back_populates="following",
+    )
+    following = relationship(
+        "User",
+        secondary=follow,
         primaryjoin="User.id == followers.c.followed_id",
         secondaryjoin="User.id == followers.c.follower_id",
-        backref="following",
-        lazy='selectin'
+        back_populates="followers",
     )
