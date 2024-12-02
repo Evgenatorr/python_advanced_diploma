@@ -15,7 +15,6 @@ async def check_user(
 ) -> UserResponse | HTTPException:
     """
     Функция проверки пользователя на существование
-    и получение его подписок и подписчиков
     :param user_id: id пользователя
     :param session: асинхронная сессия базы данных
     :return: UserResponse | None

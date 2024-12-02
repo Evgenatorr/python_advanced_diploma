@@ -6,6 +6,15 @@ from src.database.models.base_model import MyBase
 
 
 class Like(MyBase):
+    """
+    Класс orm модели Like.
+
+    Attributes:
+        name (str): Имя пользователя
+        user_id (int): id пользователя
+        tweet_id (int): id твита
+    """
+
     name: Mapped[str] = mapped_column(VARCHAR(30), nullable=False)
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), nullable=False

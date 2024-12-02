@@ -6,6 +6,14 @@ from src.database.models.base_model import MyBase
 
 
 class Media(MyBase):
+    """
+    Класс orm модели Media.
+
+    Attributes:
+        tweet_id (int): id твита
+        file_link (str): Путь до файла, который добавил пользователь
+    """
+
     tweet_id: Mapped[int] = mapped_column(
         ForeignKey("tweets.id", ondelete="CASCADE"), nullable=True
     )
