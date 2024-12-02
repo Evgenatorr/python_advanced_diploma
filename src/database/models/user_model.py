@@ -21,8 +21,10 @@ class User(MyBase):
         name (str): Сообщение, что написал пользователь в твит
         api_key (list[str]): Список картинок, которые пользователь добавил в твит
         tweets (Mapped[list[Tweet]]): Связь с orm моделью Tweet
-        followers (Mapped[list[User]]): Самоссылающиеся отношения. Список подписчиков у пользователя
-        following (Mapped[list[User]]): Самоссылающиеся отношения. Список подписок у пользователя
+        followers (Mapped[list[User]]): Самоссылающиеся отношения.
+            Список подписчиков у пользователя
+        following (Mapped[list[User]]): Самоссылающиеся отношения.
+            Список подписок у пользователя
     """
 
     name: Mapped[str] = mapped_column(VARCHAR(30), nullable=False)
