@@ -1,11 +1,11 @@
 from typing import Sequence
 
+from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, desc
 
 from src.crud.base_crud import BaseCrud
-from src.database.models.tweet_model import Tweet
 from src.database.models.like_model import Like
+from src.database.models.tweet_model import Tweet
 
 
 class TweetCrud(BaseCrud[Tweet]):

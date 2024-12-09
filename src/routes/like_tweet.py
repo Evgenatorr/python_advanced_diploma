@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.crud import tweet_crud, like_crud
-from src.schemas import UserResponse
+from logs_conf.log_utils import logger
 from src.auth.secure_user import get_user_by_secure_key
+from src.crud import like_crud, tweet_crud
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
-from logs_conf.log_utils import logger
+from src.schemas import UserResponse
 
 router: APIRouter = APIRouter(tags=["POST"])
 
@@ -29,7 +29,7 @@ async def like_tweet(
     logger.debug('Пользователь с id %s '
                  'ставит лайк', current_user.id)
     tweet: Tweet | None = await tweet_crud.get(
-        session=session, id=tweet_id
+        session=session, obj_id=tweet_id
     )
 
     if tweet:

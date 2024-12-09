@@ -1,23 +1,21 @@
-from fastapi import APIRouter, Depends, status, Form
+from fastapi import APIRouter, Depends, Form, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from logs_conf.log_utils import logger
 from src.crud import user_crud
 from src.database.async_session import get_async_session
 from src.database.models.user_model import User
 from src.schemas import UserCreate
-from logs_conf.log_utils import logger
-
 
 router = APIRouter(tags=["POST"])
 
 
-@router.post("/api/create_user", description='Роутер для создания нового пользователя',
-             response_model=None)
+@router.post("/api/create_user", description='Роутер для создания нового пользователя')
 async def create_user(
         name: str = Form(pattern=r'[a-zA-Zа-яА-Я]'),
-        api_key: str = Form(...),
+        api_key: str = Form(),
         session: AsyncSession = Depends(get_async_session),
 ) -> JSONResponse:
     """

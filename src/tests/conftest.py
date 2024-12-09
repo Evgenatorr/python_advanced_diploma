@@ -1,25 +1,18 @@
-from typing import AsyncGenerator
 import os
-import pytest
-import asyncio
+from typing import AsyncGenerator
 
+import pytest
 from asgi_lifespan import LifespanManager
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.loader import app
-from src.database.session_manager import db_manager
-from src.database.models import user_model, base_model
-from logs_conf.logging_test_conf import TEST_LOGGING_CONFIG
 from logs_conf.log_utils import logger, setup_logging
+from logs_conf.logging_test_conf import TEST_LOGGING_CONFIG
+from src.database.models import base_model, user_model
+from src.database.session_manager import db_manager
+from src.loader import app
+
 os.environ["MODE"] = "test"
-
-
-@pytest.fixture(scope='session', autouse=True)
-def event_loop(request):
-    loop = asyncio.new_event_loop()
-    yield loop
-    loop.close()
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -58,7 +51,11 @@ async def init_db(db_session: AsyncSession):
             name='test_name',
             api_key='test'
         )
-        db_session.add(user)
+        user2 = user_model.User(
+            name='test_name2',
+            api_key='test2'
+        )
+        db_session.add_all((user, user2, ))
         await db_session.commit()
 
         yield

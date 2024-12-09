@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.crud import like_crud
-from src.schemas import UserResponse
+from logs_conf.log_utils import logger
 from src.auth.secure_user import get_user_by_secure_key
+from src.crud import like_crud
 from src.database.async_session import get_async_session
 from src.database.models.like_model import Like
-from logs_conf.log_utils import logger
+from src.schemas import UserResponse
 
 router: APIRouter = APIRouter(tags=["DELETE"])
 
@@ -33,7 +33,7 @@ async def delete_like(
     )
 
     if like:
-        await like_crud.delete(session=session, id=like.id)
+        await like_crud.delete(session=session, obj_id=like.id)
         logger.info('Пользователь с id %s '
                     'успешно убрал лайк с твита с id %s', current_user.id, tweet_id)
         return JSONResponse(

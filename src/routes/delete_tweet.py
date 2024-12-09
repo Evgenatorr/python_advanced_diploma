@@ -1,17 +1,16 @@
-from typing import cast, List
+from typing import List, cast
 
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.crud import tweet_crud
-from src.schemas import UserResponse
+from logs_conf.log_utils import logger
 from src.auth.secure_user import get_user_by_secure_key
+from src.crud import tweet_crud
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
+from src.schemas import UserResponse
 from src.utils.remove_images import del_images
-from logs_conf.log_utils import logger
-
 
 router: APIRouter = APIRouter(tags=["DELETE"])
 
@@ -34,11 +33,11 @@ async def delete_tweet(
         current_user.id
     )
     tweet: Tweet | None = await tweet_crud.get(
-        session=session, id=tweet_id
+        session=session, obj_id=tweet_id
     )
 
     if tweet and tweet.author_id == current_user.id:
-        await tweet_crud.delete(session=session, id=tweet_id)
+        await tweet_crud.delete(session=session, obj_id=tweet_id)
         logger.info(
             'Пользователь с id %s успешно удалил твит с id %s',
             current_user.id, tweet_id

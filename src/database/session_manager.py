@@ -1,9 +1,8 @@
 import contextlib
 from typing import AsyncIterator, Optional
 
-from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
-                                    async_sessionmaker, create_async_engine,
-                                    AsyncConnection)
+from sqlalchemy.ext.asyncio import (AsyncConnection, AsyncEngine, AsyncSession,
+                                    async_sessionmaker, create_async_engine)
 
 from logs_conf.log_utils import logger
 

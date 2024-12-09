@@ -1,8 +1,8 @@
-from typing import Type, TypeVar, Generic, Sequence, Optional, Any
+from typing import Any, Generic, Optional, Sequence, Type, TypeVar
 
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from fastapi.encoders import jsonable_encoder
 
 ModelType = TypeVar("ModelType")
 
@@ -11,11 +11,11 @@ class BaseCrud(Generic[ModelType]):
     def __init__(self, model: Type[ModelType]) -> None:
         self.model = model
 
-    async def get(self, session: AsyncSession, id: int) -> Optional[ModelType]:
+    async def get(self, session: AsyncSession, obj_id: int) -> Optional[ModelType]:
         """
         Получение объекта по первичному ключу
         """
-        return await session.get(self.model, id)
+        return await session.get(self.model, obj_id)
 
     async def get_list(self, session: AsyncSession) -> Sequence[ModelType]:
         """
@@ -56,11 +56,11 @@ class BaseCrud(Generic[ModelType]):
         await session.refresh(db_obj)
         return db_obj
 
-    async def delete(self, session: AsyncSession, id: int) -> Optional[ModelType]:
+    async def delete(self, session: AsyncSession, obj_id: int) -> Optional[ModelType]:
         """
         Удаление объекта по первичному ключу
         """
-        obj = await self.get(session, id)
+        obj = await self.get(session, obj_id)
         if obj:
             await session.delete(obj)
             await session.commit()

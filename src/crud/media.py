@@ -1,10 +1,10 @@
-from typing import Sequence, List
+from typing import List, Sequence
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.models.media_model import Media
 from src.crud.base_crud import BaseCrud
+from src.database.models.media_model import Media
 
 
 class MediaCrud(BaseCrud[Media]):

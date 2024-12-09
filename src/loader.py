@@ -3,14 +3,14 @@ from typing import AsyncIterator
 
 from fastapi import FastAPI
 
-from src.routes import (create_tweet, create_user, delete_follow, delete_like,
-                        delete_tweet, follow, get_tweets, get_user,
-                        get_user_by_id, like_tweet, create_media, get_all_users)
-
-from .database.session_manager import db_manager
-from src.utils.get_db_url import get_database_url
 from logs_conf.log_utils import logger, setup_logging
 from logs_conf.logging_conf import LOGGING_CONFIG
+from src.routes import (create_media, create_tweet, create_user, delete_follow,
+                        delete_like, delete_tweet, follow, get_all_users,
+                        get_tweets, get_user, get_user_by_id, like_tweet)
+from src.utils.get_db_url import get_database_url
+
+from .database.session_manager import db_manager
 
 setup_logging(LOGGING_CONFIG)
 

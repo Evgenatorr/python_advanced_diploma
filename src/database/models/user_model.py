@@ -4,7 +4,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database.models.base_model import MyBase
 
-
 follow = Table(
     "followers",
     MyBase.metadata,

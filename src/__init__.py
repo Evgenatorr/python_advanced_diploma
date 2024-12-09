@@ -1,1 +1,1 @@
-from . import database, routes, schemas, utils, tests, loader
+from . import database, loader, routes, schemas, tests, utils

@@ -1,8 +1,8 @@
 from typing import Optional
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlalchemy import select
 
 from src.crud.base_crud import BaseCrud
 from src.database.models.user_model import User

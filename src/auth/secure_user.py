@@ -2,11 +2,11 @@ from fastapi import Depends, HTTPException, Security, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
+from logs_conf.log_utils import logger
 from src.crud import user_crud
 from src.database import models
 from src.database.async_session import get_async_session
 from src.schemas import UserResponse
-from logs_conf.log_utils import logger
 
 
 async def get_user_by_secure_key(

@@ -1,7 +1,7 @@
-from httpx import AsyncClient
 from http import HTTPStatus
-
 from io import BytesIO
+
+from httpx import AsyncClient
 
 
 async def test_create_tweet(async_client: AsyncClient):
@@ -20,6 +20,15 @@ async def test_create_tweet(async_client: AsyncClient):
         headers={"api-key": "test"}
     )
     tweet_id = 2
+    assert response.status_code == HTTPStatus.CREATED
+    assert response.json()['tweet_id'] == tweet_id
+
+    response = await async_client.post(
+        "/api/tweets",
+        json={"tweet_data": "This is a test tweet2"},
+        headers={"api-key": "test2"}
+    )
+    tweet_id = 3
     assert response.status_code == HTTPStatus.CREATED
     assert response.json()['tweet_id'] == tweet_id
 
@@ -95,3 +104,12 @@ async def test_delete_tweet(async_client: AsyncClient):
     )
     assert response.status_code == HTTPStatus.OK
     assert len(response.json()['tweets']) == 1
+
+
+async def test_deleting_someone_tweet(async_client: AsyncClient):
+    api_key = "test"
+    tweet_id_another_user = 3
+    response = await async_client.delete(
+        f"/api/tweets/{tweet_id_another_user}", headers={"api-key": api_key},
+    )
+    assert response.status_code == HTTPStatus.BAD_REQUEST

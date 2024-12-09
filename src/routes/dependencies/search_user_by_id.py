@@ -2,11 +2,11 @@ from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
+from logs_conf.log_utils import logger
 from src.crud import user_crud
 from src.database.async_session import get_async_session
 from src.database.models.user_model import User
 from src.schemas import UserResponse
-from logs_conf.log_utils import logger
 
 
 async def check_user(

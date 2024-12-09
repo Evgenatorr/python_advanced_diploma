@@ -1,18 +1,19 @@
 import os
 
-from fastapi import Depends, APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
-from src.crud import user_crud
-from src.database.async_session import get_async_session
 from config import settings
 from logs_conf.log_utils import logger
-
+from src.crud import user_crud
+from src.database.async_session import get_async_session
 
 router = APIRouter(tags=["POST"])
-templates = Jinja2Templates(directory=os.path.join(settings.static.STATIC_PATH, 'admin'))
+templates = Jinja2Templates(
+    directory=os.path.join(settings.static.STATIC_PATH, 'admin')
+)
 
 
 @router.post("/api/users", description='Роутер для вывода списка пользователей')

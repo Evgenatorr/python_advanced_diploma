@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
+from logs_conf.log_utils import logger
 from src.routes.dependencies.search_user_by_id import check_user
 from src.schemas import APIUserResponseSuccessful, UserResponse
-from logs_conf.log_utils import logger
-
 
 router = APIRouter(tags=["GET"])
 
