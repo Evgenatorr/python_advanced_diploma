@@ -9,13 +9,15 @@ from src.auth.secure_user import get_user_by_secure_key
 from src.crud import media_crud, tweet_crud
 from src.database.async_session import get_async_session
 from src.database.models import media_model, tweet_model
-from src.schemas import TweetCreate, TweetCreateRequest, UserResponse
+from src.schemas import (TweetCreate, TweetCreateRequest, UserResponse,
+                         APITweetListResponseSuccessful)
 
 router = APIRouter(tags=["POST"])
 
 
 @router.post("/api/tweets", status_code=status.HTTP_201_CREATED,
-             description='Роутер для создания нового твита')
+             description='Роутер для создания нового твита',
+             response_model=APITweetListResponseSuccessful)
 async def create_tweet(
         tweet_data: TweetCreateRequest,
         session: AsyncSession = Depends(get_async_session),

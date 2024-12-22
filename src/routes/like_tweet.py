@@ -7,12 +7,13 @@ from src.auth.secure_user import get_user_by_secure_key
 from src.crud import like_crud, tweet_crud
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
-from src.schemas import UserResponse
+from src.schemas import UserResponse, APIBaseSuccessfulSchema
 
 router: APIRouter = APIRouter(tags=["POST"])
 
 
-@router.post("/api/tweets/{tweet_id}/likes", status_code=status.HTTP_201_CREATED)
+@router.post("/api/tweets/{tweet_id}/likes", status_code=status.HTTP_201_CREATED,
+             response_model=APIBaseSuccessfulSchema)
 async def like_tweet(
         tweet_id: int,
         session: AsyncSession = Depends(get_async_session),

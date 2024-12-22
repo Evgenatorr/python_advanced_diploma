@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict
-
 from .base_api_schema import APIBaseSuccessfulSchema
 
 
@@ -22,6 +21,10 @@ class CreateMedia(BaseModel):
     file_link: str
 
 
+class ResponseMedia(APIBaseSuccessfulSchema):
+    media_id: int
+
+
 class TweetBase(BaseModel):
     content: str
     attachments: Optional[List[str]]
@@ -29,7 +32,7 @@ class TweetBase(BaseModel):
 
 class TweetCreateRequest(BaseModel):
     tweet_data: str
-    tweet_media_ids: Optional[List[int]] = []
+    tweet_media_ids: Optional[List[int]] = None
 
 
 class TweetCreate(TweetBase):

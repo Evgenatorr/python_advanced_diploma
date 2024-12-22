@@ -9,13 +9,14 @@ from src.auth.secure_user import get_user_by_secure_key
 from src.crud import tweet_crud
 from src.database.async_session import get_async_session
 from src.database.models.tweet_model import Tweet
-from src.schemas import UserResponse
+from src.schemas import UserResponse, APIBaseSuccessfulSchema
 from src.utils.remove_images import del_images
 
 router: APIRouter = APIRouter(tags=["DELETE"])
 
 
-@router.delete("/api/tweets/{tweet_id}", status_code=status.HTTP_200_OK)
+@router.delete("/api/tweets/{tweet_id}", status_code=status.HTTP_200_OK,
+               response_model=APIBaseSuccessfulSchema)
 async def delete_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(get_async_session),

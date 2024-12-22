@@ -57,6 +57,7 @@ class Settings(BaseSettings):
     APP_BASE_PORT: int = 8000
     APP_BASE_URL: str = f'http://{APP_BASE_HOST}:{APP_BASE_PORT}'
     BASE_DIR: Path = Path(__file__).parent
+    ENCRYPTED_SECRET_KEY: str | None = os.getenv('ENCRYPTED_SECRET_KEY')
     db: PostgresDbConfig = PostgresDbConfig()
     db_test: PostgresTestDbConfig = PostgresTestDbConfig()
     static: StaticConfig = StaticConfig()

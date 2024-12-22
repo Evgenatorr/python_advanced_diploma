@@ -1,8 +1,11 @@
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.dialects.postgresql import INTEGER, VARCHAR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy_utils import EncryptedType
+from sqlalchemy_utils.types.encrypted.encrypted_type import AesEngine
 
 from src.database.models.base_model import MyBase
+from config import settings
 
 follow = Table(
     "followers",
@@ -17,8 +20,8 @@ class User(MyBase):
     Класс orm модели Tweet.
 
     Attributes:
-        name (str): Сообщение, что написал пользователь в твит
-        api_key (list[str]): Список картинок, которые пользователь добавил в твит
+        name (str): Имя пользователя
+        api_key (bytes): Зашифрованный ключ пользователя
         tweets (Mapped[list[Tweet]]): Связь с orm моделью Tweet
         followers (Mapped[list[User]]): Самоссылающиеся отношения.
             Список подписчиков у пользователя
@@ -27,7 +30,9 @@ class User(MyBase):
     """
 
     name: Mapped[str] = mapped_column(VARCHAR(30), nullable=False)
-    api_key: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)
+    api_key: Mapped[bytes] = mapped_column(EncryptedType(
+        VARCHAR, key=settings.ENCRYPTED_SECRET_KEY, engine=AesEngine
+    ), nullable=False, unique=True, index=True)
 
     tweets = relationship(argument="Tweet", back_populates="author", lazy="selectin")
     followers = relationship(

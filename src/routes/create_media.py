@@ -8,12 +8,13 @@ from src.crud import media_crud
 from src.database.async_session import get_async_session
 from src.database.models.media_model import Media
 from src.routes.dependencies.load_media import load_media
-from src.schemas import CreateMedia, UserResponse
+from src.schemas import CreateMedia, UserResponse, ResponseMedia
 
 router = APIRouter(tags=["POST"])
 
 
-@router.post("/api/medias", status_code=status.HTTP_201_CREATED)
+@router.post("/api/medias", status_code=status.HTTP_201_CREATED,
+             response_model=ResponseMedia)
 async def add_media(
     path: CreateMedia = Depends(load_media),
     session: AsyncSession = Depends(get_async_session),
