@@ -16,7 +16,7 @@ router = APIRouter(tags=["POST"])
 @router.post("/api/medias", status_code=status.HTTP_201_CREATED,
              response_model=ResponseMedia)
 async def add_media(
-    path: CreateMedia = Depends(load_media),
+    path: str = Depends(load_media),
     session: AsyncSession = Depends(get_async_session),
     current_user: UserResponse = Depends(get_user_by_secure_key),
 ) -> JSONResponse:
@@ -29,12 +29,12 @@ async def add_media(
     :return: JSONResponse
     """
     if path:
-        file_name: str = path.file_link.split("/")[-1]
-        path_nginx_image: CreateMedia = CreateMedia(
-            file_link=f"/images/{file_name}"
+        file_name: str = path.split("/")[-1]
+        image_data: CreateMedia = CreateMedia(
+            file_name=file_name
         )
         new_media: Media = await media_crud.post(
-            session=session, obj_in_data=path_nginx_image.model_dump()
+            session=session, obj_in_data=image_data.model_dump()
         )
         logger.info('Изображение успешно добавлено в базу данных')
         return JSONResponse(
@@ -49,5 +49,5 @@ async def add_media(
         content={
             "result": "false",
         },
-        status_code=status.HTTP_404_NOT_FOUND,
+        status_code=status.HTTP_400_BAD_REQUEST,
     )

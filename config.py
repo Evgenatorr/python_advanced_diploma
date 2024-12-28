@@ -52,6 +52,7 @@ class Settings(BaseSettings):
     """
     LOG_FILE: str | None = os.getenv('LOG_FILE')
     TEST_LOG_FILE: str | None = os.getenv('TEST_LOG_FILE')
+    TEST_IMAGES_DIR: str = os.path.join(Path(__file__).parent, 'src', 'tests', 'images')
     API_KEY_HEADER: APIKeyHeader = APIKeyHeader(name="api-key")
     APP_BASE_HOST: str = 'fastapi'
     APP_BASE_PORT: int = 8000

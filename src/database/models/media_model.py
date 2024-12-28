@@ -11,10 +11,10 @@ class Media(MyBase):
 
     Attributes:
         tweet_id (int): id твита
-        file_link (str): Путь до файла, который добавил пользователь
+        file_name (str): Название картинки, которую пользователь добавил в твит
     """
 
     tweet_id: Mapped[int] = mapped_column(
         ForeignKey("tweets.id", ondelete="CASCADE"), nullable=True
     )
-    file_link: Mapped[str] = mapped_column(VARCHAR(300), nullable=False)
+    file_name: Mapped[str] = mapped_column(VARCHAR(300), nullable=False)

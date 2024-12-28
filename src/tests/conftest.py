@@ -11,6 +11,7 @@ from logs_conf.logging_test_conf import TEST_LOGGING_CONFIG
 from src.database.models import base_model, user_model
 from src.database.session_manager import db_manager
 from src.loader import app
+from config import settings
 
 os.environ["MODE"] = "test"
 
@@ -61,6 +62,8 @@ async def init_db(db_session: AsyncSession):
         yield
         async with db_manager.connect() as connection:
             await connection.run_sync(base_model.MyBase.metadata.drop_all)
+        for filename in os.listdir(settings.TEST_IMAGES_DIR):
+            os.remove(os.path.join(settings.TEST_IMAGES_DIR, filename))
 
 
 @pytest.fixture(scope="function")

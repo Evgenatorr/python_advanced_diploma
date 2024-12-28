@@ -37,7 +37,7 @@ async def create_tweet(
         media_ids=tweet_data.tweet_media_ids
     )
     media_links: List[str] | None = [
-        media.file_link for media in medias
+        media.file_name for media in medias
     ] if medias else None
 
     create_tweet_data: TweetCreate = TweetCreate(

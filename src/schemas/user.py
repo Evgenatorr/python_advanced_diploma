@@ -21,7 +21,7 @@ class Follower(UserBase):
 
 class UserResponse(UserBase):
     id: int
-    tweets: Optional[list[TweetResponse]] = []
+    tweets: Optional[list[TweetResponse]] = None
     followers: Optional[list[Follower]]
     following: Optional[list[Follower]]
     model_config = ConfigDict(from_attributes=True)

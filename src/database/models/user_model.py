@@ -1,7 +1,7 @@
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.dialects.postgresql import INTEGER, VARCHAR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy_utils import EncryptedType
+from sqlalchemy_utils import StringEncryptedType
 from sqlalchemy_utils.types.encrypted.encrypted_type import AesEngine
 
 from src.database.models.base_model import MyBase
@@ -30,7 +30,7 @@ class User(MyBase):
     """
 
     name: Mapped[str] = mapped_column(VARCHAR(30), nullable=False)
-    api_key: Mapped[bytes] = mapped_column(EncryptedType(
+    api_key: Mapped[bytes] = mapped_column(StringEncryptedType(
         VARCHAR, key=settings.ENCRYPTED_SECRET_KEY, engine=AesEngine
     ), nullable=False, unique=True, index=True)
 

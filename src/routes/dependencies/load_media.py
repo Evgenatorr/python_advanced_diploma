@@ -8,7 +8,7 @@ from src.utils.create_unic_out_path import out_path
 
 async def load_media(
         file: UploadFile,
-) -> CreateMedia | bool:
+) -> str | bool:
     """
     Функция загрузки изображения от пользователя на сервер
     :param file: изображение от пользователя
@@ -24,6 +24,4 @@ async def load_media(
         await out_file.write(content)
     logger.info('Изображение успешно загружено')
 
-    return CreateMedia(
-        file_link=unic_out_path
-    )
+    return unic_out_path

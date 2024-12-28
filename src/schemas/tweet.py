@@ -18,7 +18,7 @@ class LikeTweet(BaseModel):
 
 
 class CreateMedia(BaseModel):
-    file_link: str
+    file_name: str
 
 
 class ResponseMedia(APIBaseSuccessfulSchema):

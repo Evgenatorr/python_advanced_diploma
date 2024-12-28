@@ -25,7 +25,7 @@ async def test_create_tweet(async_client: AsyncClient):
 
     response = await async_client.post(
         "/api/tweets",
-        json={"tweet_data": "This is a test tweet2"},
+        json={"tweet_data": "This is a test tweet3"},
         headers={"api-key": "test2"}
     )
     tweet_id = 3
@@ -37,10 +37,9 @@ async def test_load_media_for_tweet(async_client: AsyncClient):
     # Создаем временный файл-изображение
     file_data = BytesIO(b"test image data")
     file_data.name = "test_image.jpg"
-
     response = await async_client.post(
         "/api/medias",
-        files={"file": ("test_image.jpg", file_data, "image/jpeg")},
+        files={"file": (file_data.name, file_data, "image/jpeg")},
         headers={"api-key": "test"},
     )
     media_id = 1
@@ -50,12 +49,23 @@ async def test_load_media_for_tweet(async_client: AsyncClient):
 
 
 async def test_get_tweets(async_client: AsyncClient):
+    api_key = "test"
     response = await async_client.get(
         "/api/tweets",
-        headers={"api-key": "test"}
+        headers={"api-key": api_key}
     )
     assert response.status_code == HTTPStatus.OK
     assert len(response.json()['tweets']) == 2
+
+
+async def test_get_tweets_with_invalid_apikey(async_client: AsyncClient):
+    invalid_api_key = "test4"
+    response = await async_client.get(
+        "/api/tweets",
+        headers={"api-key": invalid_api_key}
+    )
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json()['detail'] == 'Missing or invalid API key'
 
 
 async def test_like_tweet(async_client: AsyncClient):
@@ -66,12 +76,28 @@ async def test_like_tweet(async_client: AsyncClient):
     assert response.status_code == HTTPStatus.CREATED
 
 
+async def test_like_non_existent_tweet(async_client: AsyncClient):
+    invalid_tweet_id = 4
+    response = await async_client.post(
+        f"/api/tweets/{invalid_tweet_id}/likes", headers={"api-key": "test"},
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
 async def test_delete_like(async_client: AsyncClient):
     tweet_id = 1
     response = await async_client.delete(
         f"/api/tweets/{tweet_id}/likes", headers={"api-key": "test"},
     )
     assert response.status_code == HTTPStatus.OK
+
+
+async def test_delete_like_non_existent_tweet(async_client: AsyncClient):
+    invalid_tweet_id = 4
+    response = await async_client.delete(
+        f"/api/tweets/{invalid_tweet_id}/likes", headers={"api-key": "test"},
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
 
 
 async def test_create_tweet_invalid_json(async_client: AsyncClient):
@@ -108,8 +134,17 @@ async def test_delete_tweet(async_client: AsyncClient):
 
 async def test_deleting_someone_tweet(async_client: AsyncClient):
     api_key = "test"
-    tweet_id_another_user = 3
+    tweet_id_another_user = 3  # id твита другого пользователя
     response = await async_client.delete(
         f"/api/tweets/{tweet_id_another_user}", headers={"api-key": api_key},
+    )
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+async def test_deleting_non_existent_tweet(async_client: AsyncClient):
+    api_key = "test"
+    invalid_tweet_id = 4
+    response = await async_client.delete(
+        f"/api/tweets/{invalid_tweet_id}", headers={"api-key": api_key},
     )
     assert response.status_code == HTTPStatus.BAD_REQUEST

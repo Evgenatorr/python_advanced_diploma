@@ -12,6 +12,7 @@ def out_path(filename: str) -> str:
     """
 
     random_num: str = uuid.uuid4().hex
-    path: str = os.path.join(settings.static.IMAGES_PATH, random_num + filename)
-
-    return path
+    if os.environ.get('MODE') == "test":
+        return os.path.join(settings.TEST_IMAGES_DIR, random_num + filename)
+    else:
+        return os.path.join(settings.static.IMAGES_PATH, random_num + filename)
