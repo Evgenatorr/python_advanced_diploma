@@ -1,4 +1,5 @@
 import os
+from typing import Sequence
 
 from fastapi import APIRouter, Depends
 from fastapi.templating import Jinja2Templates
@@ -8,6 +9,7 @@ from starlette.requests import Request
 from config import settings
 from logs_conf.log_utils import logger
 from src.crud import user_crud
+from src.database.models import user_model
 from src.database.async_session import get_async_session
 
 router = APIRouter(tags=["POST"])
@@ -30,8 +32,8 @@ async def get_list_users(
     logger.debug(
         'Выводим таблицу с пользователями'
     )
-    users = await user_crud.get_list(session=session)
-    count_users = len(users)
+    users: Sequence[user_model.User] = await user_crud.get_list(session=session)
+    count_users: int = len(users)
     return templates.TemplateResponse(
         'get_all_users.html', {
             'request': request,
