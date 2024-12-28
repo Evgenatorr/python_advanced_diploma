@@ -2,7 +2,6 @@ import aiofiles
 from fastapi import UploadFile
 
 from logs_conf.log_utils import logger
-from src.schemas.tweet import CreateMedia
 from src.utils.create_unic_out_path import out_path
 
 
