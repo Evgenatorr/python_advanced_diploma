@@ -28,20 +28,17 @@ class TweetCrud(BaseCrud[Tweet]):
         """
         Функция получения твитов с твитами на кого подписан пользователь
         """
-
-        pagination.offset = (pagination.offset - 1) * pagination.limit
+        start = (pagination.offset - 1) * pagination.limit
+        end = (pagination.offset - 1) * pagination.limit + pagination.limit
         stmt = (
             select(self.model)
             .outerjoin(Like, Like.tweet_id == self.model.id)
             .filter(self.model.author_id.in_(users_id))
             .group_by(self.model.id)
             .order_by(desc(func.count(Like.id)))
-            .offset(pagination.offset)
-            .limit(pagination.limit)
         )
-
         result = await session.execute(stmt)
-        return result.scalars().all()
+        return result.scalars().all()[start:end]
 
 
 tweet_crud = TweetCrud(Tweet)
