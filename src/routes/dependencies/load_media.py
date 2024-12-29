@@ -13,6 +13,7 @@ async def load_media(
     :param file: изображение от пользователя
     :return: str
     """
+    print(type(file))
     logger.debug('Загружаем изображение')
     if file.filename is None:
         return False

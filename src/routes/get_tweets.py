@@ -10,7 +10,7 @@ from src.crud import tweet_crud, user_crud
 from src.database.async_session import get_async_session
 from src.database.models import user_model
 from src.schemas import (APITweetListResponseSuccessful, TweetResponse,
-                         UserResponse)
+                         UserResponse, PaginationParams)
 
 router = APIRouter(tags=["GET"])
 
@@ -21,11 +21,13 @@ router = APIRouter(tags=["GET"])
     status_code=status.HTTP_200_OK,
 )
 async def get_tweets(
+        pagination_params: PaginationParams = Depends(),
         current_user: UserResponse = Depends(get_user_by_secure_key),
         session: AsyncSession = Depends(get_async_session),
 ) -> JSONResponse:
     """
     Роутер для получения всех твитов пользователя вместе с твитами на кого подписан user
+    :param pagination_params: пагинация
     :param current_user: пользователь прошедший аутентификацию
     :param session: асинхронная сессия базы данных
     :return: JSONResponse
@@ -43,13 +45,14 @@ async def get_tweets(
             status_code=status.HTTP_404_NOT_FOUND,
         )
 
-    # Получаем список с id пользователей, на которых подписан текущий пользователь
+    # Получаем список id пользователей, на которых подписан текущий пользователь
     following_ids: List[int] = [f.id for f in user_in_db.following]
     # Включаем твиты пользователя и тех, на кого он подписан
     all_user_ids: List[int] = [current_user.id] + following_ids
 
     tweets_with_likes = await tweet_crud.get_tweets_with_tweets_you_follow(
-        session=session, users_id=all_user_ids
+        session=session, users_id=all_user_ids,
+        pagination=pagination_params
     )
     if not tweets_with_likes:
         return JSONResponse(

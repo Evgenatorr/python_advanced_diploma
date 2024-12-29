@@ -36,24 +36,32 @@ async def subscription(
         session=session, user_id=current_user.id
     )
 
-    if user_in_db and follower:
-        user_in_db.followers.remove(follower)
-        await session.commit()
-        logger.info(
-            'Пользователь с id %s '
-            'отписался от пользователя с id %s', follower.id, user_in_db.id
-        )
+    if user_in_db is None or follower is None:
+        logger.info('Пользователь не найден')
         return JSONResponse(
             content={
-                "result": "true",
+                "result": "false",
             },
-            status_code=status.HTTP_200_OK,
+            status_code=status.HTTP_404_NOT_FOUND,
         )
 
-    logger.info('Пользователь не найден')
+    if follower not in user_in_db.followers:
+        return JSONResponse(
+            content={
+                "result": "false",
+            },
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    user_in_db.followers.remove(follower)
+    await session.commit()
+    logger.info(
+        'Пользователь с id %s '
+        'отписался от пользователя с id %s', follower.id, user_in_db.id
+    )
     return JSONResponse(
         content={
-            "result": "false",
+            "result": "true",
         },
-        status_code=status.HTTP_404_NOT_FOUND,
+        status_code=status.HTTP_200_OK,
     )

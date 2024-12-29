@@ -1,7 +1,12 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from .base_api_schema import APIBaseSuccessfulSchema
+
+
+class PaginationParams(BaseModel):
+    offset: int = Field(default=1, ge=1)
+    limit: int = Field(default=10, ge=1, le=100)
 
 
 class Author(BaseModel):

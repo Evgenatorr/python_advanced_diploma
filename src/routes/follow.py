@@ -35,24 +35,40 @@ async def subscription(
         session=session, user_id=current_user.id
     )
 
-    if user_in_db and follower:
-        follower.following.append(user_in_db)
-        await session.refresh(follower)
-        await session.commit()
-        logger.info('Пользователь с id %s '
-                    'подписался на пользователя с id %s',
-                    follower.id, user_in_db.id, )
+    if user_in_db is None or follower is None:
+        logger.info('Пользователь не найден')
         return JSONResponse(
             content={
-                "result": "true",
+                "result": "false",
             },
-            status_code=status.HTTP_201_CREATED,
+            status_code=status.HTTP_404_NOT_FOUND,
         )
 
-    logger.info('Пользователь не найден')
+    if follower.id == user_id:
+        return JSONResponse(
+            content={
+                "result": "false",
+            },
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if user_in_db in follower.following:
+        return JSONResponse(
+            content={
+                "result": "false",
+            },
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    follower.following.append(user_in_db)
+    await session.refresh(follower)
+    await session.commit()
+    logger.info('Пользователь с id %s '
+                'подписался на пользователя с id %s',
+                follower.id, user_in_db.id, )
     return JSONResponse(
         content={
-            "result": "false",
+            "result": "true",
         },
-        status_code=status.HTTP_404_NOT_FOUND,
+        status_code=status.HTTP_201_CREATED,
     )

@@ -6,7 +6,7 @@ from logs_conf.log_utils import logger
 from src.auth.secure_user import get_user_by_secure_key
 from src.crud import like_crud, tweet_crud
 from src.database.async_session import get_async_session
-from src.database.models.tweet_model import Tweet
+from src.database.models import tweet_model, like_model
 from src.schemas import UserResponse, APIBaseSuccessfulSchema
 
 router: APIRouter = APIRouter(tags=["POST"])
@@ -29,30 +29,44 @@ async def like_tweet(
 
     logger.debug('Пользователь с id %s '
                  'ставит лайк', current_user.id)
-    tweet: Tweet | None = await tweet_crud.get(
+    tweet: tweet_model.Tweet | None = await tweet_crud.get(
         session=session, obj_id=tweet_id
     )
 
-    if tweet:
-        like_data: dict[str, str | int] = {
-            "user_id": current_user.id,
-            "name": current_user.name,
-            "tweet_id": tweet_id,
-        }
-
-        await like_crud.post(session=session, obj_in_data=like_data)
-        logger.info('Пользователь с id %s '
-                    'успешно поставил лайк на твит с id %s', current_user.id, tweet_id)
+    if not tweet:
         return JSONResponse(
             content={
-                "result": "true",
+                "result": "false",
             },
-            status_code=status.HTTP_201_CREATED,
+            status_code=status.HTTP_404_NOT_FOUND,
         )
 
+    like: like_model.Like | None = await like_crud.get_by_user_id_and_tweet_id(
+        session=session,
+        user_id=current_user.id,
+        tweet_id=tweet_id,
+    )
+
+    if like:
+        return JSONResponse(
+            content={
+                "result": "false",
+            },
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+    like_data: dict[str, str | int] = {
+        "user_id": current_user.id,
+        "name": current_user.name,
+        "tweet_id": tweet_id,
+    }
+
+    await like_crud.post(session=session, obj_in_data=like_data)
+    logger.info('Пользователь с id %s '
+                'успешно поставил лайк на твит с id %s', current_user.id, tweet_id)
     return JSONResponse(
         content={
-            "result": "false",
+            "result": "true",
         },
-        status_code=status.HTTP_404_NOT_FOUND,
+        status_code=status.HTTP_201_CREATED,
     )

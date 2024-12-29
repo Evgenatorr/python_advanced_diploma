@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.crud.base_crud import BaseCrud
 from src.database.models.like_model import Like
 from src.database.models.tweet_model import Tweet
+from src.schemas import PaginationParams
 
 
 class TweetCrud(BaseCrud[Tweet]):
@@ -21,17 +22,22 @@ class TweetCrud(BaseCrud[Tweet]):
         return query.scalars().all()
 
     async def get_tweets_with_tweets_you_follow(
-        self, session: AsyncSession, users_id: list[int]
+        self, session: AsyncSession, users_id: list[int],
+        pagination: PaginationParams
     ) -> Sequence[Tweet]:
         """
         Функция получения твитов с твитами на кого подписан пользователь
         """
+
+        pagination.offset = (pagination.offset - 1) * pagination.limit
         stmt = (
             select(self.model)
             .outerjoin(Like, Like.tweet_id == self.model.id)
             .filter(self.model.author_id.in_(users_id))
             .group_by(self.model.id)
             .order_by(desc(func.count(Like.id)))
+            .offset(pagination.offset)
+            .limit(pagination.limit)
         )
 
         result = await session.execute(stmt)
